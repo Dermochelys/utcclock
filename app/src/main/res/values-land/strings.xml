@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="date_format_pattern">EEEE\nMMMM dd yyyy</string>
+    <string name="time_format_pattern">HH:mm z</string>
+</resources>
