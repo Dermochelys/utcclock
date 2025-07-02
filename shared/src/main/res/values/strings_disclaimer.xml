@@ -1,0 +1,8 @@
+<resources>
+    <string name="contract_description">Icon of a contract</string>
+    <string name="checkmark_description">Icon of a checkmark</string>
+
+    <string name="disclaimer">Disclaimer</string>
+    <string name="disclaimer_text">\nDISCLAIMER (Please read, scrolling down if necessary)\n\nUsing any app, including this app, in continuous long-term display may result in your device\'s screen retaining some portion(s) of the displayed content permanently, also known as \'burn-in\'. While several mitigation features are in place in this app to prevent \'burn-in\', this app is provided \'as is\' without warranty of any kind, express or implied.\n\nThe developers make no representations or warranties regarding the app\'s performance, reliability, or suitability for any particular purpose. Users assume all risks associated with the use of this app, including but not limited to potential screen damage, data loss, or device malfunction.</string>
+    <string name="i_agree">I Agree</string>
+</resources>

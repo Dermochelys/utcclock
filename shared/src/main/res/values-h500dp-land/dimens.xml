@@ -1,0 +1,13 @@
+<resources>
+    <!-- eg Google TV 1080p -->
+
+    <!-- 77-80 -->
+    <dimen name="time_font_size_min">80sp</dimen>
+    <dimen name="time_font_size_max">80sp</dimen>
+
+    <!-- 29-33 -->
+    <dimen name="date_font_size_min">29sp</dimen>
+    <dimen name="date_font_size_max">33sp</dimen>
+
+    <dimen name="disclaimer_font_size">18sp</dimen>
+</resources>

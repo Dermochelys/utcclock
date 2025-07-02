@@ -1,0 +1,13 @@
+<resources>
+    <!-- eg Nexus 7 (2012) -->
+
+    <!-- 117-120 -->
+    <dimen name="time_font_size_min">117sp</dimen>
+    <dimen name="time_font_size_max">120sp</dimen>
+
+    <!-- 37-40 -->
+    <dimen name="date_font_size_min">37sp</dimen>
+    <dimen name="date_font_size_max">40sp</dimen>
+
+    <dimen name="disclaimer_font_size">18sp</dimen>
+</resources>

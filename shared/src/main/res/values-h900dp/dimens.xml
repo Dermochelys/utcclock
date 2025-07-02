@@ -1,0 +1,11 @@
+<resources>
+    <!-- e.g. Pixel 9 Pro -->
+
+    <!-- 37-40 -->
+    <dimen name="time_font_size_min">37sp</dimen>
+    <dimen name="time_font_size_max">40sp</dimen>
+
+    <!-- 10-13 -->
+    <dimen name="date_font_size_min">10sp</dimen>
+    <dimen name="date_font_size_max">13sp</dimen>
+</resources>
