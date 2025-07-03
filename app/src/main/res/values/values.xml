@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="top_edge_spring_weight">10</integer>
+    <integer name="inner_spring_weight">5</integer>
+    <integer name="bottom_edge_spring_weight">10</integer>
+</resources>

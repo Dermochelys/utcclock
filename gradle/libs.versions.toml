@@ -1,7 +1,7 @@
 [versions]
 agp = "8.11.0"
-androidJoda = "2.13.1"
 kotlin = "2.2.0"
+core = "1.16.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -13,7 +13,7 @@ navigationFragmentKtx = "2.9.0"
 navigationUiKtx = "2.9.0"
 
 [libraries]
-android-joda = { module = "net.danlew:android.joda", version.ref = "androidJoda" }
+androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

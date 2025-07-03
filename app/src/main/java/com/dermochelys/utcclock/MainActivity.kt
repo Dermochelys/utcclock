@@ -1,6 +1,5 @@
 package com.dermochelys.utcclock
 
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -9,9 +8,14 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowInsets.Type
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.WindowInsetsControllerCompat
 import com.dermochelys.utcclock.databinding.ActivityMainBinding
+import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -30,7 +35,13 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        hideSystemUi()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(getTypes())
+            val horizontalPadding = max(bars.left, bars.right)
+            val verticalPadding = max(bars.top, bars.bottom)
+            v.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -51,24 +62,28 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
 
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+    override fun onResume() {
+        super.onResume()
+        hideSystemUi()
     }
 
     // Helpers
 
-    @Suppress("DEPRECATION")
     private fun hideSystemUi() {
-        val decorView = window.decorView
+        val types = getTypes()
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.R) {
-            val types = Type.statusBars() or Type.systemBars() or Type.navigationBars()
-            decorView.windowInsetsController?.hide(types)
-        } else {
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
-        }
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
 
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        windowInsetsController.hide(types)
         supportActionBar?.hide()
     }
 }
+
+internal fun getTypes() = Type.systemBars() or Type.displayCutout() or Type.navigationBars() or Type.statusBars()

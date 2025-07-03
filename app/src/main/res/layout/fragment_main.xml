@@ -1,85 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:orientation="vertical"
-    android:layout_gravity="center"
-    app:layout_dodgeInsetEdges="all"
-    tools:context=".ContentFragment">
+    android:background="@color/black">
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        tools:context=".ContentFragment">
+
+        <FrameLayout
+            android:id="@+id/top_spring"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="@integer/top_edge_spring_weight"
+            tools:ignore="UselessLeaf">
+
+            <ImageView
+                android:id="@+id/font_license_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="10dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/license_24px"
+                android:contentDescription="@string/licenses_description"
+                tools:layout_marginStart="5dp"
+                tools:layout_marginTop="5dp"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/top_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textview_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:textColor="@color/white"
+                android:textSize="60sp"
+                android:textAlignment="center"
+                android:fontFamily="@font/doto"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                tools:text="Wednesday\nSeptember 09 2025"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            tools:ignore="UselessLeaf" />
+
+        <FrameLayout
+            android:id="@+id/horizontal_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            tools:ignore="UselessLeaf" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            tools:ignore="UselessLeaf" />
+
+        <FrameLayout
+            android:id="@+id/bottom_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textview_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading"
+                android:textColor="@color/white"
+                android:textSize="100sp"
+                android:textAlignment="center"
+                android:fontFamily="@font/doto"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                tools:text="12:59 UTC"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/bottom_spring"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="@integer/bottom_edge_spring_weight"
+            tools:ignore="UselessLeaf"/>
+    </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:ignore="UselessLeaf" />
+        android:layout_height="match_parent"
+        android:contentDescription="@string/overlay"
+        android:background="@drawable/overlay_pattern"/>
 
-    <FrameLayout
-        android:id="@+id/top_view"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/font_license_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
+        android:text="@string/license_text"
+        android:linksClickable="true"
+        android:autoLink="web"
+        android:background="@color/white"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="30dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:fontFamily="@font/doto"
+        android:textColor="@color/black"
+        android:textColorLink="@color/blue"
+        app:drawableBottomCompat="@drawable/doto_license_qr"
+        tools:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/textview_date"
-            android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/app_license_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@color/black"
+        android:visibility="gone">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/disclaimer"
+                android:padding="20dp"
+                android:textColor="@color/white"
+                android:drawablePadding="20dp"
+                android:textSize="@dimen/disclaimer_font_size"
+                app:drawableTint="@color/white"
+                app:drawableTopCompat="@drawable/contract_24px">
+            </TextView>
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/app_license_content_agree"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/loading"
-            android:textColor="@color/white"
-            android:textSize="60sp"
-            android:textAlignment="center"
-            android:fontFamily="@font/doto"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            tools:text="September\n09\n2025"/>
-    </FrameLayout>
+            android:background="@drawable/white_rectangle_bordered">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        tools:ignore="UselessLeaf" />
-
-    <FrameLayout
-        android:id="@+id/horizontal_divider"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        tools:ignore="UselessLeaf" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.5"
-        tools:ignore="UselessLeaf" />
-
-    <FrameLayout
-        android:id="@+id/bottom_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
-
-        <TextView
-            android:id="@+id/textview_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/loading"
-            android:textColor="@color/white"
-            android:textSize="100sp"
-            android:textAlignment="center"
-            android:fontFamily="@font/doto"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            tools:text="12:59\nUTC"/>
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:ignore="UselessLeaf" />
-
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="20dp"
+                android:text="@string/i_agree"
+                android:gravity="center_vertical"
+                android:drawablePadding="10dp"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/disclaimer_font_size"
+                app:drawableLeftCompat="@drawable/task_alt_24px"
+                app:drawableTint="@android:color/holo_green_dark" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>
