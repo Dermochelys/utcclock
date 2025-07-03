@@ -30,6 +30,7 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/license_24px"
                 android:contentDescription="@string/licenses_description"
+                android:focusable="true"
                 tools:layout_marginStart="5dp"
                 tools:layout_marginTop="5dp"/>
         </FrameLayout>
@@ -133,6 +134,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:background="@color/black"
+        android:paddingTop="35dp"
         android:visibility="gone">
 
         <ScrollView
@@ -158,7 +160,8 @@
             android:id="@+id/app_license_content_agree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/white_rectangle_bordered">
+            android:background="@drawable/white_rectangle_bordered"
+            android:focusable="true">
 
             <TextView
                 android:layout_width="wrap_content"

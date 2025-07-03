@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="time_font_size_min">32sp</dimen>
+    <dimen name="time_font_size_max">42sp</dimen>
+    <dimen name="date_font_size_min">15sp</dimen>
+    <dimen name="date_font_size_max">25sp</dimen>
+    <dimen name="disclaimer_font_size">18sp</dimen>
+</resources>

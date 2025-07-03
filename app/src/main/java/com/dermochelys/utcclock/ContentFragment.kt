@@ -13,12 +13,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.ColorInt
+import androidx.core.content.edit
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.alpha
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.dermochelys.utcclock.databinding.FragmentMainBinding
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -26,7 +29,6 @@ import java.util.Date
 import java.util.TimeZone
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
-import androidx.core.content.edit
 
 private const val SAVED_INSTANCE_STATE_TEXT_SIZE_DATE = "textSizeDate"
 
@@ -87,7 +89,20 @@ class ContentFragment : Fragment() {
     /** Only valid between onViewCreated and onViewDestroyed. */
     private lateinit var broacastReceiver: BroadcastReceiver
 
+    private val onBackPressedCallback: OnBackPressedCallback = object: OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            lifecycleScope.coroutineContext.cancelChildren()
+            isEnabled = false
+            hideFontLicenseContent()
+        }
+    }
+
     private val utc: TimeZone by lazy { TimeZone.getTimeZone("UTC") }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -165,9 +180,13 @@ class ContentFragment : Fragment() {
     private fun scheduleFontLicenseContentHiding() {
         lifecycleScope.launch {
             delay(FONT_LICENSE_CONTENT_DISPLAY_SECONDS.seconds)
-            fontLicenseContentVisibility = View.GONE
-            applyFontLicenseContentState()
+            hideFontLicenseContent()
         }
+    }
+
+    private fun hideFontLicenseContent() {
+        fontLicenseContentVisibility = View.GONE
+        applyFontLicenseContentState()
     }
 
     private fun repeatingOverlayTweak() {
@@ -285,6 +304,7 @@ class ContentFragment : Fragment() {
 
         if (fontLicenseContentVisibility == View.VISIBLE) {
             scheduleFontLicenseContentHiding()
+            onBackPressedCallback.isEnabled = true
         }
     }
 
@@ -294,6 +314,10 @@ class ContentFragment : Fragment() {
         }
 
         binding.appLicenseContent.visibility = appLicenseContentVisibility
+
+        if (appLicenseContentVisibility == View.VISIBLE) {
+            binding.appLicenseContentAgree.requestFocus()
+        }
     }
     private fun applyOverlayState() {
         val layoutParams = binding.overlay.layoutParams as FrameLayout.LayoutParams
@@ -329,6 +353,3 @@ private fun getRandomFontLicenseButtonHorizontalMargin() = Random.nextInt(6, 55)
 
 private fun Resources.getRandomDimension(idMin: Int, idMax: Int): Float =
     Random.nextDouble(getDimension(idMin).toDouble(), getDimension(idMax).toDouble()).toFloat()
-
-private fun Resources.getRandomInteger(idMin: Int, idMax: Int): Int =
-    Random.nextInt(getInteger(idMin), getInteger(idMax))

@@ -1,25 +1,27 @@
 package com.dermochelys.utcclock
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updateLayoutParams
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.dermochelys.utcclock.databinding.ActivityMainBinding
-import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,10 +38,15 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val bars = insets.getInsets(getTypes())
-            val horizontalPadding = max(bars.left, bars.right)
-            val verticalPadding = max(bars.top, bars.bottom)
-            v.setPadding(horizontalPadding, verticalPadding, horizontalPadding, verticalPadding)
+            v.setPadding(0, 0, 0, 0)
+
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = 0
+                leftMargin = 0
+                bottomMargin = 0
+                rightMargin = 0
+            }
+
             WindowInsetsCompat.CONSUMED
         }
     }
