@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:keepScreenOn="true"
     tools:context=".MainActivity">
 
@@ -17,7 +16,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_main" />

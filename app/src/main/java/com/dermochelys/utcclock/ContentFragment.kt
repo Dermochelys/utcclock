@@ -8,19 +8,23 @@ import android.content.IntentFilter
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.ColorInt
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.edit
-import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.alpha
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.dermochelys.utcclock.databinding.FragmentMainBinding
+import com.dermochelys.utcclock.resources.getRandomMiddleSpringWeight
+import com.dermochelys.utcclock.resources.getRandomTextSizeDate
+import com.dermochelys.utcclock.resources.getRandomTextSizeTime
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,27 +34,15 @@ import java.util.TimeZone
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
-private const val SAVED_INSTANCE_STATE_TEXT_SIZE_DATE = "textSizeDate"
+private const val SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT = "fontLicenseButtonAlignment"
 
-private const val SAVED_INSTANCE_STATE_TEXT_SIZE_TIME = "textSizeTime"
-
-private const val SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_GRAVITY = "licenseGravity"
-
-private const val SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_MARGIN_HORIZONTAL = "licenseMarginHorizontal"
-
-private const val SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBILITY = "fontLicenseContentVisibility"
-
-private const val SAVED_INSTANCE_STATE_OVERLAY_POSITION_X = "overlayPositionX"
-
-private const val SAVED_INSTANCE_STATE_OVERLAY_POSITION_Y = "overlayPositionY"
+private const val SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBLE = "fontLicenseContentVisible"
 
 private const val SAVED_INSTANCE_STATE_CONTENT_COLOR = "contentColor"
 
 private const val SAVED_INSTANCE_STATE_TEXT_ORDER = "textOrder"
 
-private const val SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBILITY = "appLicenseContentVisibility"
-
-private const val FONT_LICENSE_BUTTON_ALPHA_DIMMING = 20
+private const val SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBLE = "appLicenseContentVisible"
 
 private const val FONT_LICENSE_CONTENT_DISPLAY_SECONDS = 15
 
@@ -59,33 +51,6 @@ private const val SHARED_PREFS_DISCLAIMER_FILE_NAME = "disclaimer"
 private const val SHARED_PREFS_DISCLAIMER_VALUE_NAME = "agreed"
 
 class ContentFragment : Fragment() {
-
-    private var fontLicenseButtonGravity: Int = getRandomFontLicenseButtonGravity()
-
-    private var fontLicenseButtonHorizontalMargin: Int = getRandomFontLicenseButtonHorizontalMargin()
-
-    private var textSizeDate: Float = 0f
-
-    private var textSizeTime: Float = 0f
-
-    @ColorInt
-    private var contentColor: Int = getRandomContentColor()
-
-    private var textOrderDateFirst: Boolean = Random.nextBoolean()
-
-    private var overlayPositionX: Int = getRandomOverlayPosition()
-
-    private var overlayPositionY: Int = getRandomOverlayPosition()
-
-    private var fontLicenseContentVisibility: Int = View.GONE
-
-    private var appLicenseContentVisibility: Int = View.VISIBLE
-
-    private var _binding: FragmentMainBinding? = null
-
-    /** Only valid between onCreateView and onDestroyView. */
-    private val binding get() = _binding!!
-
     /** Only valid between onViewCreated and onViewDestroyed. */
     private lateinit var broacastReceiver: BroadcastReceiver
 
@@ -99,6 +64,29 @@ class ContentFragment : Fragment() {
 
     private val utc: TimeZone by lazy { TimeZone.getTimeZone("UTC") }
 
+    private var dateText by mutableStateOf("Loading...")
+
+    private var timeText by mutableStateOf("Loading...")
+
+    private var showingFontLicense by mutableStateOf(false)
+
+    private var showingAppLicense by mutableStateOf(false)
+
+    private var fontLicenseButtonAlignment: Alignment by mutableStateOf(Alignment.Center)
+
+    @delegate:ColorInt
+    private var contentColor by mutableStateOf(Color.WHITE)
+
+    private var textOrderDateFirst by mutableStateOf(true)
+
+    private var overlayPositionShift by mutableStateOf(false)
+
+    private var textSizeDate by mutableFloatStateOf(0f)
+
+    private var textSizeTime by mutableFloatStateOf(0f)
+
+    private var middleSpringWeight by mutableFloatStateOf(0f)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
@@ -108,76 +96,89 @@ class ContentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MainScreen(
+                    dateText = dateText,
+                    timeText = timeText,
+                    textSizeDate = textSizeDate,
+                    textSizeTime = textSizeTime,
+                    textOrderDateFirst = textOrderDateFirst,
+                    showingFontLicense = showingFontLicense,
+                    showingAppLicense = showingAppLicense,
+                    fontLicenseButtonAlignment = fontLicenseButtonAlignment,
+                    overlayPositionShift = overlayPositionShift,
+                    middleSprintWeight = middleSpringWeight,
+
+                    onFontLicenseButtonClick = {
+                        if (!showingFontLicense) {
+                            setupForFontLicenseContentHiding()
+                        }
+                    },
+
+                    onAgreeClick = {
+                        val sharedPreferences = requireContext().getSharedPreferences(
+                            SHARED_PREFS_DISCLAIMER_FILE_NAME,
+                            Context.MODE_PRIVATE
+                        )
+                        sharedPreferences.edit {
+                            putBoolean(
+                                SHARED_PREFS_DISCLAIMER_VALUE_NAME,
+                                true
+                            )
+                        }
+                        showingAppLicense = false
+                    },
+                )
+            }
+        }
     }
 
-    override fun onViewCreated(view: View,
-                               savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.window?.decorView?.setBackgroundColor(Color.BLACK)
 
-        savedInstanceState?.getFloat(SAVED_INSTANCE_STATE_TEXT_SIZE_DATE)?.let { textSizeDate = it }
-        savedInstanceState?.getFloat(SAVED_INSTANCE_STATE_TEXT_SIZE_TIME)?.let { textSizeTime = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_CONTENT_COLOR)?.let { contentColor = it }
-        savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER)?.let { textOrderDateFirst = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_GRAVITY)?.let { fontLicenseButtonGravity = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_MARGIN_HORIZONTAL)?.let { fontLicenseButtonHorizontalMargin = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBILITY)?.let { fontLicenseContentVisibility = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_OVERLAY_POSITION_X)?.let { overlayPositionX = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_OVERLAY_POSITION_Y)?.let { overlayPositionY = it }
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBILITY)?.let { appLicenseContentVisibility = it }
+        textSizeDate = resources.getRandomTextSizeDate()
+        textSizeTime = resources.getRandomTextSizeTime()
+        middleSpringWeight = resources.getRandomMiddleSpringWeight()
 
-        if (view.context.getSharedPreferences(SHARED_PREFS_DISCLAIMER_FILE_NAME, Context.MODE_PRIVATE).getBoolean(
-                SHARED_PREFS_DISCLAIMER_VALUE_NAME, false)) {
-            appLicenseContentVisibility = View.GONE
+        overlayPositionShift = Random.nextBoolean()
+
+        contentColor = savedInstanceState?.getInt(SAVED_INSTANCE_STATE_CONTENT_COLOR) ?: getRandomContentColor()
+        textOrderDateFirst = savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER) ?: Random.nextBoolean()
+        fontLicenseButtonAlignment = savedInstanceState?.getInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT)?.toAlignment() ?: getRandomAlignment()
+
+        showingFontLicense = savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBLE) ?: false
+
+        if (showingFontLicense) {
+            setupForFontLicenseContentHiding()
         }
 
-        textSizeTime = getRandomTextSizeTime(resources)
-        textSizeDate = getRandomTextSizeDate(resources)
+        showingAppLicense = savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBLE) ?: false
 
-        binding.textviewTime.paint.isAntiAlias = false
-        binding.textviewDate.paint.isAntiAlias = false
-
-        binding.fontLicenseButton.setOnClickListener {
-            if (fontLicenseContentVisibility == View.VISIBLE) {
-                return@setOnClickListener
-            }
-
-            fontLicenseContentVisibility = View.VISIBLE
-            applyFontLicenseContentState()
-        }
-
-        binding.appLicenseContentAgree.setOnClickListener {
-            val sharedPreferences = binding.appLicenseContentAgree.context.getSharedPreferences(
-                SHARED_PREFS_DISCLAIMER_FILE_NAME,
-                Context.MODE_PRIVATE
-            )
-
-            sharedPreferences.edit { putBoolean(SHARED_PREFS_DISCLAIMER_VALUE_NAME, true) }
-            appLicenseContentVisibility = View.GONE
-            applyAppLicenseContentState()
-        }
-
-        applyContentState()
-        applyOverlayState()
-        applyFontLicenseContentState()
-        applyAppLicenseContentState()
+        showingAppLicense =
+            !view.context.getSharedPreferences(SHARED_PREFS_DISCLAIMER_FILE_NAME, Context.MODE_PRIVATE).getBoolean(
+                SHARED_PREFS_DISCLAIMER_VALUE_NAME, false)
 
         broacastReceiver = object: BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 tweakContent(resources)
-                applyContentState()
+                updateDisplayText()
             }
         }
 
         repeatingOverlayTweak()
+        updateDisplayText()
+
         view.context.registerReceiver(broacastReceiver, IntentFilter(Intent.ACTION_TIME_TICK))
         view.context.registerReceiver(broacastReceiver, IntentFilter(Intent.ACTION_TIME_CHANGED))
     }
 
-    private fun scheduleFontLicenseContentHiding() {
+    private fun setupForFontLicenseContentHiding() {
+        showingFontLicense = true
+        onBackPressedCallback.isEnabled = true
+
         lifecycleScope.launch {
             delay(FONT_LICENSE_CONTENT_DISPLAY_SECONDS.seconds)
             hideFontLicenseContent()
@@ -185,36 +186,29 @@ class ContentFragment : Fragment() {
     }
 
     private fun hideFontLicenseContent() {
-        fontLicenseContentVisibility = View.GONE
-        applyFontLicenseContentState()
+        showingFontLicense = false
+        onBackPressedCallback.isEnabled = false
     }
 
     private fun repeatingOverlayTweak() {
         lifecycleScope.launch {
             delay(5.seconds)
             tweakOverlay()
-            applyOverlayState()
             repeatingOverlayTweak()
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putFloat(SAVED_INSTANCE_STATE_TEXT_SIZE_DATE, textSizeDate)
-        outState.putFloat(SAVED_INSTANCE_STATE_TEXT_SIZE_TIME, textSizeTime)
         outState.putInt(SAVED_INSTANCE_STATE_CONTENT_COLOR, contentColor)
         outState.putBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER, textOrderDateFirst)
-        outState.putInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_GRAVITY, fontLicenseButtonGravity)
-        outState.putInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_MARGIN_HORIZONTAL, fontLicenseButtonHorizontalMargin)
-        outState.putInt(SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBILITY, fontLicenseContentVisibility)
-        outState.putInt(SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBILITY, appLicenseContentVisibility)
-        outState.putInt(SAVED_INSTANCE_STATE_OVERLAY_POSITION_X, overlayPositionX)
-        outState.putInt(SAVED_INSTANCE_STATE_OVERLAY_POSITION_Y, overlayPositionY)
+        outState.putInt(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT, fontLicenseButtonAlignment.toInt())
+        outState.putBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_CONTENT_VISIBLE, showingFontLicense)
+        outState.putBoolean(SAVED_INSTANCE_STATE_APP_LICENSE_CONTENT_VISIBLE, showingAppLicense)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
 
         if (this::broacastReceiver.isInitialized) {
             context?.unregisterReceiver(broacastReceiver)
@@ -225,54 +219,30 @@ class ContentFragment : Fragment() {
 
     private fun tweakContent(resources: Resources) {
         textOrderDateFirst = !textOrderDateFirst
-        textSizeDate = getRandomTextSizeDate(resources)
-        textSizeTime = getRandomTextSizeTime(resources)
+
+        textSizeDate = resources.getRandomTextSizeDate()
+        textSizeTime = resources.getRandomTextSizeTime()
+
+        middleSpringWeight = resources.getRandomMiddleSpringWeight()
+
         contentColor = getRandomContentColor()
-        fontLicenseButtonGravity = getRandomFontLicenseButtonGravity()
-        fontLicenseButtonHorizontalMargin = getRandomFontLicenseButtonHorizontalMargin()
+        fontLicenseButtonAlignment = getRandomAlignment()
     }
 
     private fun tweakOverlay() {
-        overlayPositionX = getRandomOverlayPosition()
-        overlayPositionY = getRandomOverlayPosition()
+        overlayPositionShift = !overlayPositionShift
     }
 
-    private fun applyContentState(date: Date = Date()) {
-        val textViewDate = binding.textviewDate
-        textViewDate.setTextColor(contentColor)
-        textViewDate.text = printCurrentDateFormatted(date)
-        textViewDate.textSize = textSizeDate
-
-        val textViewTime = binding.textviewTime
-        textViewTime.setTextColor(contentColor)
-        textViewTime.text = printCurrentTimeFormatted(date)
-        textViewTime.textSize = textSizeTime
-
-        binding.topView.removeAllViews()
-        binding.bottomView.removeAllViews()
-
-        if (textOrderDateFirst) {
-            binding.topView.addView(textViewDate)
-            binding.bottomView.addView(textViewTime)
-        } else {
-            binding.topView.addView(textViewTime)
-            binding.bottomView.addView(textViewDate)
-        }
-
-        applyFontLicenseButtonState()
-        applyFontLicenseContentBackgroundState()
-    }
-
-    private fun applyFontLicenseContentBackgroundState() {
-        binding.fontLicenseContent.background.setTint(
-            ColorUtils.setAlphaComponent(contentColor, 255))
+    private fun updateDisplayText(date: Date = Date()) {
+        dateText = printCurrentDateFormatted(date)
+        timeText = printCurrentTimeFormatted(date)
     }
 
     private fun printCurrentTimeFormatted(date: Date) =
-        getFormattedDateTime(date, getString(R.string.time_format_pattern))
+        getFormattedDateTime(date, getString(com.dermochelys.utcclock.shared.R.string.time_format_pattern))
 
     private fun printCurrentDateFormatted(date: Date) =
-        getFormattedDateTime(date, getString(R.string.date_format_pattern))
+        getFormattedDateTime(date, getString(com.dermochelys.utcclock.shared.R.string.date_format_pattern))
 
     @SuppressLint("SimpleDateFormat")
     private fun getFormattedDateTime(date: Date, formatString: String): String {
@@ -280,76 +250,6 @@ class ContentFragment : Fragment() {
         simpleDateFormat.timeZone = utc
         return simpleDateFormat.format(date)
     }
-
-    private fun applyFontLicenseButtonState() {
-        val layoutParams = binding.fontLicenseButton.layoutParams as FrameLayout.LayoutParams
-        layoutParams.gravity = fontLicenseButtonGravity
-
-        when (fontLicenseButtonGravity) {
-            Gravity.START -> layoutParams.setMargins(fontLicenseButtonHorizontalMargin, 0, 0 ,0)
-            else -> layoutParams.setMargins(0, 0, fontLicenseButtonHorizontalMargin, 0)
-        }
-
-        binding.fontLicenseButton.layoutParams = layoutParams
-        val buttonAlpha = contentColor.alpha - FONT_LICENSE_BUTTON_ALPHA_DIMMING
-        binding.fontLicenseButton.drawable.setTint(ColorUtils.setAlphaComponent(contentColor, buttonAlpha))
-    }
-
-    private fun applyFontLicenseContentState() {
-        if (binding.fontLicenseContent.visibility == fontLicenseContentVisibility) {
-            return
-        }
-
-        binding.fontLicenseContent.visibility = fontLicenseContentVisibility
-
-        if (fontLicenseContentVisibility == View.VISIBLE) {
-            scheduleFontLicenseContentHiding()
-            onBackPressedCallback.isEnabled = true
-        }
-    }
-
-    private fun applyAppLicenseContentState() {
-        if (binding.appLicenseContent.visibility == appLicenseContentVisibility) {
-            return
-        }
-
-        binding.appLicenseContent.visibility = appLicenseContentVisibility
-
-        if (appLicenseContentVisibility == View.VISIBLE) {
-            binding.appLicenseContentAgree.requestFocus()
-        }
-    }
-    private fun applyOverlayState() {
-        val layoutParams = binding.overlay.layoutParams as FrameLayout.LayoutParams
-        layoutParams.setMargins(overlayPositionX, overlayPositionY, 0 ,0)
-        binding.overlay.layoutParams = layoutParams
-    }
-
-    private fun getRandomTextSizeTime(resources: Resources) =
-        resources.getRandomDimension(R.dimen.time_font_size_min, R.dimen.time_font_size_max)
-
-    private fun getRandomTextSizeDate(resources: Resources) =
-        resources.getRandomDimension(R.dimen.date_font_size_min, R.dimen.date_font_size_max)
 }
 
-private fun getRandomFontLicenseButtonGravity() =
-    when (Random.nextInt(1, 4)) {
-        1 -> Gravity.CENTER_HORIZONTAL
-        2 -> Gravity.START
-        else -> Gravity.END
-    } or Gravity.CENTER_VERTICAL
-
-private fun getRandomOverlayPosition() = Random.nextInt(-5, 1)
-
-@ColorInt
-private fun getRandomContentColor(): Int = Color.argb(
-    Random.nextInt(240, 256),
-    Random.nextInt(220, 256),
-    Random.nextInt(220, 256),
-    Random.nextInt(220, 256)
-)
-
-private fun getRandomFontLicenseButtonHorizontalMargin() = Random.nextInt(6, 55)
-
-private fun Resources.getRandomDimension(idMin: Int, idMax: Int): Float =
-    Random.nextDouble(getDimension(idMin).toDouble(), getDimension(idMax).toDouble()).toFloat()
+internal fun getRandomFontLicenseButtonHorizontalMargin() = Random.nextInt(96, 188)

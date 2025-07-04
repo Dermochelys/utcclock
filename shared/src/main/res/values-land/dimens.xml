@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="time_font_size_min">36sp</dimen>
+    <dimen name="time_font_size_max">42sp</dimen>
+    <dimen name="date_font_size_min">13sp</dimen>
+    <dimen name="date_font_size_max">17sp</dimen>
+    <item name="middle_spring_size_min" format="float" type="dimen">0.5</item>
+    <item name="middle_spring_size_max" format="float" type="dimen">0.75</item>
+    <dimen name="disclaimer_font_size">12sp</dimen>
+</resources>

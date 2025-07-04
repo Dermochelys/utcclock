@@ -13,6 +13,7 @@ pluginManagement {
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
     repositories {
         google()
         mavenCentral()
@@ -21,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "UTC Clock"
 include(":app")
+include(":shared")
