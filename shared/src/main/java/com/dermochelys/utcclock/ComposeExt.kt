@@ -1,6 +1,5 @@
 package com.dermochelys.utcclock
 
-import android.graphics.ColorSpace
 import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.compose.ui.Alignment
