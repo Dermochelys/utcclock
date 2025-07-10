@@ -12,6 +12,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.dermochelys.utcclock.repository.SharedPreferencesRepository
+import com.dermochelys.utcclock.shared.R
+
 
 class ContentFragment : Fragment() {
     private val viewModel: ContentViewModel by viewModels()
@@ -46,7 +48,8 @@ class ContentFragment : Fragment() {
                     fontLicenseButtonAlignment = viewModel.fontLicenseButtonAlignment,
                     textOrderDateFirst = viewModel.textOrderDateFirst,
                     middleSprintWeight = viewModel.middleSpringWeight,
-                    isOnTv = requireContext.isRunningOnTv()
+                    isOnTv = requireContext.isRunningOnTv(),
+                    overlayBitmap = requireContext.vectorToBitmap(R.drawable.overlay_vector),
                 )
             }
         }

@@ -179,6 +179,10 @@ class ContentViewModel : ViewModel() {
     }
 
     private fun startRepeatingOverlayTweak() {
+        if (overlayTweakJob?.isActive == true) {
+            return
+        }
+
         overlayTweakJob = viewModelScope.launch {
             while (true) {
                 delay(5.seconds)
@@ -227,6 +231,9 @@ class ContentViewModel : ViewModel() {
     }
 
     private fun clearOverlayTweakJob() {
-        overlayTweakJob?.cancel()
+        overlayTweakJob?.let {
+            overlayTweakJob = null
+            it.cancel()
+        }
     }
 }

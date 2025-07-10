@@ -1,8 +1,8 @@
 <resources>
-    <dimen name="time_font_size_min">35sp</dimen>
-    <dimen name="time_font_size_max">41sp</dimen>
-    <dimen name="date_font_size_min">15sp</dimen>
-    <dimen name="date_font_size_max">21sp</dimen>
+    <dimen name="time_font_size_min">64sp</dimen>
+    <dimen name="time_font_size_max">75sp</dimen>
+    <dimen name="date_font_size_min">20sp</dimen>
+    <dimen name="date_font_size_max">31sp</dimen>
     <dimen name="disclaimer_font_size">15sp</dimen>
     <item name="middle_spring_size_min" format="float" type="dimen">0.75</item>
     <item name="middle_spring_size_max" format="float" type="dimen">1.25</item>

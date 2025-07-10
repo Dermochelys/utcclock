@@ -1,5 +1,6 @@
 package com.dermochelys.utcclock
 
+import android.graphics.Bitmap
 import androidx.annotation.ColorInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,11 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.graphics.TileMode.Companion.Repeated
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -59,6 +59,7 @@ fun MainScreen(
     textOrderDateFirst: Boolean = false,
     middleSprintWeight: Float = 1.0f,
     isOnTv: Boolean = true,
+    overlayBitmap: Bitmap? = null,
     ) {
 
     Box(
@@ -117,18 +118,18 @@ fun MainScreen(
         }
 
         // Overlay pattern
-        val image = ImageBitmap.imageResource(R.drawable.overlay_bitmap)
+        overlayBitmap?.let { it ->
+            val brush = remember(overlayPositionShift) {
+                ShaderBrush(ImageShader(it.asImageBitmap(), Repeated, Repeated))
+            }
 
-        val brush = remember(image) {
-            ShaderBrush(ImageShader(image, TileMode.Repeated, TileMode.Repeated))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(if (overlayPositionShift) 1.dp else 0.dp, 0.dp, 0.dp, 0.dp)
+                    .background(brush),
+            )
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(if (overlayPositionShift) 1.dp else 0.dp, 0.dp, 0.dp, 0.dp)
-                .background(brush),
-        )
 
         // Font license overlay
         if (showingFontLicense) {
