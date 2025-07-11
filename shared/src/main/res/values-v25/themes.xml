@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.UTCClock" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:colorPrimary">@color/blue</item>
+        <item name="android:colorSecondary">@color/medium_blue</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    </style>
+</resources>

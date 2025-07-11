@@ -1,28 +1,45 @@
 package com.dermochelys.utcclock.repository
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.content.edit
+import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 private const val SHARED_PREFS_DISCLAIMER_FILE_NAME = "disclaimer"
 
-private const val SHARED_PREFS_DISCLAIMER_VALUE_NAME = "agreed"
+private const val SHARED_PREFS_DISCLAIMER_AGREED_VALUE_NAME = "agreed"
 
-class SharedPreferencesRepository(applicationContext: Context): FlagStore {
-    private val sharedPrefs: SharedPreferences =
-        applicationContext.getSharedPreferences(SHARED_PREFS_DISCLAIMER_FILE_NAME, Context.MODE_PRIVATE)
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = SHARED_PREFS_DISCLAIMER_FILE_NAME,
+    produceMigrations = { applicationContext -> applicationContext.produceMigrations() }
+)
 
-    override fun isFlagSet(): Boolean {
-        return sharedPrefs.getBoolean(SHARED_PREFS_DISCLAIMER_VALUE_NAME, false)
+class DisclaimerRepository(private val applicationContext: Context) {
+    private val agreedKey: Preferences.Key<Boolean> =
+        booleanPreferencesKey(SHARED_PREFS_DISCLAIMER_AGREED_VALUE_NAME)
+
+    fun shouldShowDisclaimer(): Flow<Boolean> = applicationContext.dataStore.data.map { preferences ->
+        preferences[agreedKey]?.let { agreed -> !agreed } ?: true
     }
 
-    override fun setBoolean() {
-        sharedPrefs.edit { putBoolean(SHARED_PREFS_DISCLAIMER_VALUE_NAME, true) }
+    suspend fun onDisclaimerAgreeClicked() {
+        applicationContext.dataStore.edit { it[agreedKey] = true }
     }
 }
 
-interface FlagStore {
-    fun isFlagSet(): Boolean
+// Extension functions
 
-    fun setBoolean()
+private fun Context.produceMigrations(): List<DataMigration<Preferences>> {
+    return listOf(
+        SharedPreferencesMigration(
+            context = this,
+            sharedPreferencesName = SHARED_PREFS_DISCLAIMER_FILE_NAME,
+        )
+    )
 }

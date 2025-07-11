@@ -11,9 +11,9 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dermochelys.utcclock.repository.SharedPreferencesRepository
+import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.repository.ZonedDateRepository
 import com.dermochelys.utcclock.shared.R
-
 
 class ContentFragment : Fragment() {
     private val viewModel: ContentViewModel by viewModels()
@@ -21,9 +21,18 @@ class ContentFragment : Fragment() {
     /** Only valid between onViewCreated and onViewDestroyed. */
     private lateinit var broacastReceiver: BroadcastReceiver
 
+    private lateinit var disclaimerRepository: DisclaimerRepository
+
+    private lateinit var zonedDateRepository: ZonedDateRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this, viewModel.onBackPressedCallback)
+        val requireActivity = requireActivity()
+        val applicationContext = requireActivity.applicationContext
+
+        requireActivity.onBackPressedDispatcher.addCallback(this, viewModel.onBackPressedCallback)
+        disclaimerRepository = DisclaimerRepository(applicationContext)
+        zonedDateRepository = ZonedDateRepository()
     }
 
     override fun onCreateView(
@@ -42,7 +51,8 @@ class ContentFragment : Fragment() {
                     textSizeTime = viewModel.textSizeTime,
                     onFontLicenseButtonClick = { viewModel.onFontLicenseButtonClicked() },
                     showingFontLicense = viewModel.showingFontLicense,
-                    showingDisclaimer = viewModel.showingAppLicense,
+                    showingDisclaimer = viewModel.showingDisclaimer,
+                    showingLoading = viewModel.showingLoading,
                     onDisclaimerAgreeClick = { viewModel.onDisclaimerAgreeClicked() },
                     overlayPositionShift = viewModel.overlayPositionShift,
                     fontLicenseButtonAlignment = viewModel.fontLicenseButtonAlignment,
@@ -58,13 +68,11 @@ class ContentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.initialize(resources, savedInstanceState,
-            SharedPreferencesRepository(view.context.applicationContext)
-        )
+        viewModel.initialize(resources, savedInstanceState, disclaimerRepository, zonedDateRepository)
 
         broacastReceiver = object: BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                viewModel.onTimeChanged(resources)
+                zonedDateRepository.onTimeUpdated()
             }
         }
 
