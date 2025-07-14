@@ -6,5 +6,7 @@
     <dimen name="date_font_size_max">17sp</dimen>
     <item name="middle_spring_size_min" format="float" type="dimen">0.5</item>
     <item name="middle_spring_size_max" format="float" type="dimen">0.75</item>
-    <dimen name="disclaimer_font_size">12sp</dimen>
+    <dimen name="disclaimer_font_size">14sp</dimen>
+    <dimen name="disclaimer_horizontal_padding">50dp</dimen>
+    <dimen name="disclaimer_vertical_padding">10dp</dimen>
 </resources>

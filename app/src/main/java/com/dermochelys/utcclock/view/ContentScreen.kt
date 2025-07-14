@@ -54,17 +54,20 @@ fun MainScreen(
 
     textSizeDate: Float = 70.sp.value,
     textSizeTime: Float = 110.sp.value,
+
     onFontLicenseButtonClick: () -> Unit = {},
+    onDisclaimerAgreeClick: () -> Unit = {},
+
     showingFontLicense: Boolean = false,
     showingDisclaimer: Boolean = false,
-    onDisclaimerAgreeClick: () -> Unit = {},
+    showingLoading: Boolean = true,
+
     overlayPositionShift: Boolean = true,
     fontLicenseButtonAlignment: Alignment = Alignment.Center,
     textOrderDateFirst: Boolean = false,
     middleSprintWeight: Float = 1.0f,
     isOnTv: Boolean = true,
     overlayBitmap: Bitmap? = null,
-    showingLoading: Boolean = true,
     ) {
 
     Box(

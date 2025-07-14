@@ -15,19 +15,29 @@ android {
         applicationId = "com.dermochelys.utcclock"
         minSdk = 21
         targetSdk = 36
-        versionCode = 10
+        versionCode = 14
         versionName = "1.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            debugSymbolLevel = "FULL"
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
 
@@ -61,7 +71,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
+    //implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.foundation)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)

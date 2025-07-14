@@ -3,7 +3,9 @@
     <dimen name="time_font_size_max">50sp</dimen>
     <dimen name="date_font_size_min">20sp</dimen>
     <dimen name="date_font_size_max">29sp</dimen>
-    <dimen name="disclaimer_font_size">15sp</dimen>
+    <dimen name="disclaimer_font_size">14sp</dimen>
     <item name="middle_spring_size_min" format="float" type="dimen">0.75</item>
     <item name="middle_spring_size_max" format="float" type="dimen">1.25</item>
+    <dimen name="disclaimer_horizontal_padding">10dp</dimen>
+    <dimen name="disclaimer_vertical_padding">10dp</dimen>
 </resources>
