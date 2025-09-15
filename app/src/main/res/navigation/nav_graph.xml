@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/landing_fragment">
+
+    <fragment
+        android:id="@+id/landing_fragment"
+        android:name="com.dermochelys.utcclock.landing.LandingFragment"
+        android:label="@string/landing" />
+
+    <fragment
+        android:id="@+id/disclaimer_fragment"
+        android:name="com.dermochelys.utcclock.view.disclaimer.DisclaimerFragment"
+        android:label="@string/disclaimer" />
+
+    <fragment
+        android:id="@+id/clock_fragment"
+        android:name="com.dermochelys.utcclock.view.clock.ClockFragment"
+        android:label="@string/clock" />
+
+    <dialog
+        android:id="@+id/font_license_dialog"
+        android:name="com.dermochelys.utcclock.view.fontlicense.FontLicenseDialogFragment"
+        android:label="@string/font_license" />
+
+    <dialog
+        android:id="@+id/donation_dialog"
+        android:name="com.dermochelys.utcclock.view.donation.DonationDialogFragment"
+        android:label="@string/donation" />
+</navigation>

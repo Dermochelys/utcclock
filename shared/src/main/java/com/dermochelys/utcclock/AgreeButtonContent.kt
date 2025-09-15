@@ -26,13 +26,13 @@ fun AgreeButtonContent() {
         horizontalArrangement = Arrangement.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.task_alt_24px),
+            painter = painterResource(R.drawable.ic_check_mark),
             contentDescription = stringResource(R.string.checkmark_description),
             tint = Color.Black,
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .requiredSize(36.dp)
                 .padding(start = 10.dp)
-                .align(Alignment.Companion.CenterVertically)
+                .align(Alignment.CenterVertically)
         )
 
         Text(
@@ -42,9 +42,9 @@ fun AgreeButtonContent() {
                 dimensionResource(R.dimen.disclaimer_font_size).value + 2.0f,
                 30.0f
             )).sp,
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp)
-                .align(Alignment.Companion.CenterVertically)
+                .align(Alignment.CenterVertically)
         )
     }
 }

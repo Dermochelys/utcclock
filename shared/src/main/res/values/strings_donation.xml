@@ -1,0 +1,13 @@
+<resources>
+    <string name="turtle_icon_description">Icon of a turtle</string>
+    <string name="donation_dialog_description">Dialog with information about donating</string>
+
+    <string name="donation_text">This software is \"TurtleWare\".\nConsider making a donation to
+        organizations such as WIDECAST that support sea turtles.\n\n</string>
+
+    <string name="donation_url">https://www.widecast.org/support-us/donate</string>
+
+    <string name="donation_note">Note: WIDECAST is not affiliated in any way with this app or its
+        creator, Dermochelys Software, LLC.</string>
+
+</resources>

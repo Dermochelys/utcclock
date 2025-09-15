@@ -9,4 +9,7 @@
 .cxx
 .kotlin/**
 local.properties
-app/release
+app/release/**
+release/release.jks
+release/keystore-info.txt
+CLAUDE.md

@@ -1,18 +1,22 @@
 <resources>
     <string name="app_name">UTC Clock</string>
+
+    <string name="landing">Landing</string>
+    <string name="clock">Clock</string>
+    <string name="font_license">Font License</string>
+    <string name="donation">Donation</string>
+
     <string name="action_settings">Settings</string>
     <string name="first_fragment_label">UTC Clock</string>
     <string name="date_format_pattern">EEEE\nMMMM dd\nyyyy</string>
     <string name="time_format_pattern">HH:mm\nz</string>
     <string name="loading">Loading…</string>
-    <string name="licenses_description">Icon of a license</string>
-    <string name="show_license_description">Show the details of the font license</string>
-    <string name="contract_description">Icon of a contract</string>
-    <string name="checkmark_description">Icon of a checkmark</string>
+
     <string name="qr_description">Image of a QR code</string>
     <string name="overlay">Mesh overlay to mitigate screen burn-in</string>
-    <string name="license_text">The \'Doto\' font was created by Óliver Lalan.\n\nSee license details:\n</string>
-    <string name="license_url">https://fonts.google.com/specimen/Doto/license</string>
-    <string name="disclaimer">\nDISCLAIMER\n(Please read, scrolling down if necessary)\n\nUsing any app, including this app, in continuous long-term display may result in your device\'s screen retaining some portion(s) of the displayed content permanently, also known as \'burn-in\'.\n\nWhile several mitigation features are in place in this app to prevent \'burn-in\', this application is provided \'as is\' without warranty of any kind, express or implied.\n\nThe developers make no representations or warranties regarding the app\'s performance, reliability, or suitability for any particular purpose. Users assume all risks associated with the use of this application, including but not limited to potential screen damage, data loss, or device malfunction.\n\nThe developers shall not be liable for any direct, indirect, incidental, special, consequential, or punitive damages arising from or related to the use of this application, including but not limited to screen burn-in, hardware damage, or loss of device functionality.\n\nBy using this application, you acknowledge that you have read, understood, and agreed to these terms.\n\nUse of this application constitutes acceptance of all risks and release of the developers from any claims or damages that may arise from such use.\n</string>
-    <string name="i_agree">I Agree</string>
+
+    <string name="font_license_icon_description">Icon of a license</string>
+    <string name="font_license_dialog_description">Show the details of the font license</string>
+    <string name="font_license_text">The \'Doto\' font was created by Óliver Lalan.\n\nFor license details, see:\n</string>
+    <string name="font_license_url">https://fonts.google.com/specimen/Doto/license</string>
 </resources>
