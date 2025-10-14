@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/landing_fragment"
-        android:name="com.dermochelys.utcclock.landing.LandingFragment"
+        android:name="com.dermochelys.utcclock.view.landing.LandingFragment"
         android:label="@string/landing" />
 
     <fragment

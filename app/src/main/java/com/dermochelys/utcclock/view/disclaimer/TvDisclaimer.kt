@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import com.dermochelys.utcclock.shared.R
+import com.dermochelys.utcclock.R
 import kotlin.math.min
 
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -42,7 +42,6 @@ import kotlin.math.min
 @Preview
 fun TvDisclaimer(
     onDisclaimerAgreeClick: () -> Unit = {},
-    onViewLaunched: () -> Unit = {},
     overlayPositionShift: Boolean = false,
     overlayBitmap: Bitmap? = null,
 ) {
@@ -122,6 +121,5 @@ fun TvDisclaimer(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        onViewLaunched.invoke()
     }
 }

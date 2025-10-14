@@ -25,9 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dermochelys.utcclock.shared.R
-import com.dermochelys.utcclock.toColor
+import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.view.clock.dotoFont
+import com.dermochelys.utcclock.view.common.toColor
 
 @Composable
 @Preview

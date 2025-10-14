@@ -25,7 +25,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dermochelys.utcclock.shared.R
+import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.view.clock.dotoFont
 
 @Composable

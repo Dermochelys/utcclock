@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import com.dermochelys.utcclock.databinding.ActivityContentBinding
+import com.dermochelys.utcclock.view.common.hideSystemUi
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

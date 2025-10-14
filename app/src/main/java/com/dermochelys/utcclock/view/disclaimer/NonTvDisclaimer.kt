@@ -12,20 +12,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dermochelys.utcclock.AgreeButtonContent
-import com.dermochelys.utcclock.DisclaimerContent
 
 @Composable
 @Preview
 fun NonTvDisclaimer(
     onDisclaimerAgreeClick: () -> Unit = {},
-    onViewLaunched: () -> Unit = {},
     overlayPositionShift: Boolean = false,
     overlayBitmap: Bitmap? = null,
 ) {
@@ -59,8 +55,4 @@ fun NonTvDisclaimer(
     }
 
     overlayBitmap?.let { it -> Overlay(it, overlayPositionShift) }
-
-    LaunchedEffect(Unit) {
-        onViewLaunched.invoke()
-    }
 }

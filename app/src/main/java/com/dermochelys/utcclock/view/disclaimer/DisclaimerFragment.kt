@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.dermochelys.utcclock.R
-import com.dermochelys.utcclock.isRunningOnTv
-import com.dermochelys.utcclock.vectorToBitmap
+import com.dermochelys.utcclock.view.common.isRunningOnTv
+import com.dermochelys.utcclock.view.common.vectorToBitmap
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -27,23 +27,20 @@ class DisclaimerFragment : Fragment() {
     ): View {
         val context = requireContext()
         val onDisclaimerAgreeClicked = viewModel::onDisclaimerAgreeClicked
-        val onViewLaunched = viewModel::onViewLaunched
 
         return ComposeView(context = context).apply {
             setContent {
-                val overlayBitmap = context.vectorToBitmap(com.dermochelys.utcclock.shared.R.drawable.overlay)
+                val overlayBitmap = context.vectorToBitmap(R.drawable.overlay)
 
                 if (context.isRunningOnTv()) {
                     TvDisclaimer(
                         onDisclaimerAgreeClick = onDisclaimerAgreeClicked,
-                        onViewLaunched = onViewLaunched,
                         overlayPositionShift = viewModel.overlayPositionShift,
                         overlayBitmap = overlayBitmap,
                     )
                 } else {
                     NonTvDisclaimer(
                         onDisclaimerAgreeClick = onDisclaimerAgreeClicked,
-                        onViewLaunched = onViewLaunched,
                         overlayPositionShift = viewModel.overlayPositionShift,
                         overlayBitmap = overlayBitmap,
                     )
@@ -57,6 +54,8 @@ class DisclaimerFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.getNavigationActions().collect { it ->
+                if (it == -1) return@collect
+
                 val navOptions = NavOptions.Builder()
                     .setPopUpTo(R.id.nav_graph, true)
                     .build()

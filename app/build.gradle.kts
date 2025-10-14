@@ -18,11 +18,14 @@ android {
         applicationId = "com.dermochelys.utcclock"
         minSdk = 21
         targetSdk = 36
-        versionCode = 32
-        versionName = "1.9.0+32"
+
+        // For this app and its simple needs, no fancier version code scheme is needed.
+        // Just monotonically increase and follow SemVer for the versionName.
+        versionCode = 36
+        versionName = "1.9.1+36"
 
         // 2025-07-15 Specify NDK version as workaround: https://issuetracker.google.com/issues/237187538
-        ndkVersion = "28.2.13676358"
+        ndkVersion = "29.0.14206865"
 
         testInstrumentationRunner = "com.dermochelys.utcclock.HiltTestRunner"
     }
@@ -68,12 +71,6 @@ android {
         kotlinCompilerExtensionVersion = "1.5.15"
     }
 
-    externalNativeBuild {
-        cmake {
-            version = "4.0.2"
-        }
-    }
-
     testOptions {
         unitTests.isReturnDefaultValues = true
     }
@@ -101,9 +98,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared"))
-
     implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
@@ -141,6 +137,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     kspAndroidTest(libs.hilt.android.compiler)
 }
 

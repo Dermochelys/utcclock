@@ -1,0 +1,21 @@
+<resources>
+    <!-- eg Nexus 5 -->
+
+    <!-- 25-28 -->
+    <dimen name="time_font_size_min">25sp</dimen>
+    <dimen name="time_font_size_max">28sp</dimen>
+
+    <!-- 11-14 -->
+    <dimen name="date_font_size_min">11sp</dimen>
+    <dimen name="date_font_size_max">14sp</dimen>
+
+    <dimen name="disclaimer_font_size">18sp</dimen>
+
+    <!-- Unused (for now)
+    <dimen name="action_icon_padding_min">20dp</dimen>
+    <dimen name="action_icon_padding_max">30dp</dimen>
+    -->
+
+    <item name="middle_spring_size_min" format="float" type="dimen">0.75</item>
+    <item name="middle_spring_size_max" format="float" type="dimen">1.25</item>
+</resources>

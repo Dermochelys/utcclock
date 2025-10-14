@@ -1,23 +1,17 @@
 package com.dermochelys.utcclock.view.clock
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.os.Bundle
 import androidx.annotation.OpenForTesting
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
-import com.dermochelys.utcclock.getRandomContentColor
 import com.dermochelys.utcclock.repository.ZonedDateRepository
-import com.dermochelys.utcclock.resources.getRandomMiddleSpringWeight
-import com.dermochelys.utcclock.resources.getRandomTextSizeDate
-import com.dermochelys.utcclock.resources.getRandomTextSizeTime
-import com.dermochelys.utcclock.shared.R
-import com.dermochelys.utcclock.toColor
 import com.dermochelys.utcclock.view.OVERLAY_ROTATION_PERIOD_S
+import com.dermochelys.utcclock.view.common.getRandomContentColor
+import com.dermochelys.utcclock.view.common.toColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -27,7 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -60,10 +53,7 @@ class ClockViewModel @Inject constructor(
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
 
-    var dateText by mutableStateOf("...")
-        private set
-
-    var timeText by mutableStateOf("...")
+    var zonedDateTime by mutableStateOf(Pair<Date, TimeZone>(Date(), TimeZone.getDefault()))
         private set
 
     var showingLoading by mutableStateOf(true)
@@ -85,15 +75,6 @@ class ClockViewModel @Inject constructor(
         private set
 
     var overlayPositionShift by mutableStateOf(Random.nextBoolean())
-        private set
-
-    var textSizeDate by mutableFloatStateOf(0f)
-        private set
-
-    var textSizeTime by mutableFloatStateOf(0f)
-        private set
-
-    var middleSpringWeight by mutableFloatStateOf(0f)
         private set
 
     //  Start loaded data
@@ -118,25 +99,9 @@ class ClockViewModel @Inject constructor(
 
     private var timeJob: Job? = null
 
-    private lateinit var timeFormat: String
-
-    private lateinit var dateFormat: String
-
-    fun onViewCreated(
-        resources: Resources,
-        savedInstanceState: Bundle? = null,
-    ) {
-        timeFormat = resources.getString(R.string.time_format_pattern)
-        dateFormat = resources.getString(R.string.date_format_pattern)
-
-        loadFromSavedInstanceState(savedInstanceState)
-
-        textSizeDate = resources.getRandomTextSizeDate()
-        textSizeTime = resources.getRandomTextSizeTime()
-        middleSpringWeight = resources.getRandomMiddleSpringWeight()
-
+    init {
         overlayTweakJob = coroutineScope.launch { startRepeatingOverlayTweak() }
-        timeJob = coroutineScope.launch { subscribeToTimeUpdates(resources) }
+        timeJob = coroutineScope.launch { subscribeToTimeUpdates() }
     }
 
     @OpenForTesting
@@ -163,25 +128,25 @@ class ClockViewModel @Inject constructor(
         outState.putBoolean(SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT, dateTextAlignToStart)
     }
 
+    fun onLoadInstanceState(inState: Bundle) {
+        contentColor = inState.getInt(SAVED_INSTANCE_STATE_CONTENT_COLOR).toColor()
+        textOrderDateFirst = inState.getBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER)
+        fontLicenseButtonAlignToStart = inState.getBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT)
+        buttonRowTop = inState.getBoolean(SAVED_INSTANCE_STATE_BUTTON_ROW_ALIGNMENT)
+        dateTextAlignToStart = inState.getBoolean(SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT)
+    }
+
     fun onTimeUpdated() { coroutineScope.launch { zonedDateRepository.onTimeUpdated() } }
 
     fun getNavigationActions() = navigationActions as Flow<Int>
 
     // Helpers
 
-    private fun loadFromSavedInstanceState(savedInstanceState: Bundle?) {
-        savedInstanceState?.getInt(SAVED_INSTANCE_STATE_CONTENT_COLOR)?.toColor()?.let { contentColor = it }
-        savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER)?.let { textOrderDateFirst = it }
-        savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT)?.let { fontLicenseButtonAlignToStart = it }
-        savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_BUTTON_ROW_ALIGNMENT)?.let { buttonRowTop = it }
-        savedInstanceState?.getBoolean(SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT)?.let { dateTextAlignToStart = it }
-    }
-
-    private suspend fun subscribeToTimeUpdates(resources: Resources) {
+    private suspend fun subscribeToTimeUpdates() {
         zonedDateRepository.zonedDateFlow().collect { zonedDate ->
             this@ClockViewModel.timeLoaded = true
-            updateDisplayText(zonedDate)
-            tweakContent(resources)
+            zonedDateTime = zonedDate
+            tweakContent()
         }
     }
 
@@ -192,26 +157,16 @@ class ClockViewModel @Inject constructor(
         }
     }
 
-    private fun tweakContent(resources: Resources) {
-        textSizeDate = resources.getRandomTextSizeDate()
-        textSizeTime = resources.getRandomTextSizeTime()
-        middleSpringWeight = resources.getRandomMiddleSpringWeight()
+    private fun tweakContent() {
         contentColor = getRandomContentColor()
 
-        rotateDateText()
-        rotateButtons()
-
-        overlayPositionShift = !overlayPositionShift
-    }
-
-    private fun rotateDateText() {
         textOrderDateFirst = !textOrderDateFirst
         if (textOrderDateFirst) { dateTextAlignToStart = !dateTextAlignToStart }
-    }
 
-    private fun rotateButtons() {
         buttonRowTop = !buttonRowTop
         if (buttonRowTop) { fontLicenseButtonAlignToStart = !fontLicenseButtonAlignToStart }
+
+        overlayPositionShift = !overlayPositionShift
     }
 
     private fun tweakOverlay() {
@@ -220,29 +175,6 @@ class ClockViewModel @Inject constructor(
 
     private fun updateLoadingIndicator() {
         showingLoading = !timeLoaded || !disclaimerStateLoaded
-    }
-
-    private fun updateDisplayText(zonedDate: Pair<Date, TimeZone>) {
-        coroutineScope.launch {
-            dateText = printCurrentDateFormatted(zonedDate)
-            timeText = printCurrentTimeFormatted(zonedDate)
-        }
-    }
-
-    private fun printCurrentTimeFormatted(zonedDate: Pair<Date, TimeZone>): String {
-        return getFormattedDateTime(zonedDate, timeFormat)
-    }
-
-    private fun printCurrentDateFormatted(zonedDate: Pair<Date, TimeZone>): String {
-        return getFormattedDateTime(zonedDate, dateFormat)
-    }
-
-    private fun getFormattedDateTime(zonedDate: Pair<Date, TimeZone>,
-                                     formatString: String,
-                                     ): String {
-        val simpleDateFormat = SimpleDateFormat(formatString, Locale.US)
-        simpleDateFormat.timeZone = zonedDate.second
-        return simpleDateFormat.format(zonedDate.first)
     }
 
     private fun clearOverlayTweakJob() {

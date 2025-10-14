@@ -12,10 +12,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -26,37 +25,32 @@ class DisclaimerViewModel @Inject constructor(
     private val coroutineScope: CoroutineScope,
 ) : ViewModel() {
 
-    var overlayPositionShift by mutableStateOf(false)
-        private set
+    private val navigationActions = MutableStateFlow(-1)
+//    <Int>(
+//        // Warning: enabling replay will cause issues with rotation
+//        extraBufferCapacity = 1,
+//        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+//    )
 
-    private val navigationActions = MutableSharedFlow<Int>(
-        // Warning: enabling replay will cause issues with rotation
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    private val shouldShowJob: Job = coroutineScope.launch {
+        disclaimerRepository.shouldShowDisclaimer().collect { shouldShowDisclaimer ->
+            if (!shouldShowDisclaimer) {
+                navigationActions.emit(R.id.clock_fragment)
+            }
+        }
+    }
 
-    private var shouldShowJob: Job? = null
+    private val overlayTweakJob = coroutineScope.launch { startRepeatingOverlayTweak() }
 
     private var disclaimerAgreedJob : Job? = null
 
-    private var overlayTweakJob: Job? = null
-
-    fun onViewLaunched() {
-        shouldShowJob = coroutineScope.launch {
-            disclaimerRepository.shouldShowDisclaimer().collect { shouldShowDisclaimer ->
-                if (!shouldShowDisclaimer) {
-                    navigationActions.emit(R.id.clock_fragment)
-                }
-            }
-        }
-
-        overlayTweakJob = coroutineScope.launch { startRepeatingOverlayTweak() }
-    }
+    var overlayPositionShift by mutableStateOf(false)
+        private set
 
     fun getNavigationActions() = navigationActions as Flow<Int>
 
     fun onDisclaimerAgreeClicked() {
-        // Prevent theoretically possible re-click while backround task is processing
+        // Prevent theoretically possible re-click while background task is processing
         if (disclaimerAgreedJob != null) return
 
         disclaimerAgreedJob = coroutineScope.launch { disclaimerRepository.onDisclaimerAgreeClicked() }
@@ -72,20 +66,9 @@ class DisclaimerViewModel @Inject constructor(
     // Helpers
 
     private fun clearJobs() {
-        shouldShowJob?.let {
-            shouldShowJob = null
-            it.cancel()
-        }
-
-        disclaimerAgreedJob?.let {
-            disclaimerAgreedJob = null
-            it.cancel()
-        }
-
-        overlayTweakJob?.let {
-            overlayTweakJob = null
-            it.cancel()
-        }
+        shouldShowJob.cancel()
+        overlayTweakJob.cancel()
+        disclaimerAgreedJob?.cancel()
     }
 
     private suspend fun startRepeatingOverlayTweak() {

@@ -8,8 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.dermochelys.utcclock.hideSystemUi
-import com.dermochelys.utcclock.viewmodel.autonavback.AutoNavBackViewModel
+import com.dermochelys.utcclock.view.common.AutoNavBackViewModel
+import com.dermochelys.utcclock.view.common.hideSystemUi
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
