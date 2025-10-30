@@ -55,6 +55,10 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
+      - name: Check for dependency updates
+        run: |
+          ./gradlew dependencyUpdates --refresh-dependencies --no-parallel
+
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -65,7 +69,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew clean build connectedCheck
+          script: ./gradlew build connectedCheck
 
       - name: Check Android ELF Alignment
         uses: Dermochelys/check-android-elf-alignment@v2
