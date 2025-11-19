@@ -20,7 +20,7 @@ A simple, offline-only Android application that displays UTC (Coordinated Univer
 
 ## Requirements
 
-- **Minimum SDK**: Android 5.0 (API 21)
+- **Minimum SDK**: Android 6.0 (API 23)
 - **Target SDK**: Android 15+ (API 36)
 - **Java/Kotlin**: JVM toolchain version 24
 

@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.dermochelys.utcclock"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
 
         // For this app and its simple needs, no fancier version code scheme is needed.
