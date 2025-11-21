@@ -2,6 +2,7 @@ package com.dermochelys.utcclock.view.disclaimer
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
@@ -22,7 +23,7 @@ import com.dermochelys.utcclock.R
 @Composable
 @Preview
 fun DisclaimerContent() {
-    Column {
+    Column(modifier = Modifier.padding(horizontal = 8.dp)) {
         Icon(
             painter = painterResource(R.drawable.ic_contract),
             contentDescription = stringResource(R.string.contract_description),

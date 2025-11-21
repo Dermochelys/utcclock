@@ -5,6 +5,8 @@
     <string name="clock">Clock</string>
     <string name="font_license">Font License</string>
     <string name="donation">Donation</string>
+    <string name="widget_description">Displays current UTC time</string>
+    <string name="widget_tap_to_begin">Tap to begin</string>
 
     <string name="qr_description">Image of a QR code</string>
     <string name="font_license_icon_description">Icon of a license</string>

@@ -20,7 +20,7 @@ A simple, offline-only Android application that displays UTC (Coordinated Univer
 
 ## Requirements
 
-- **Minimum SDK**: Android 5.0 (API 21)
+- **Minimum SDK**: Android 6.0 (API 23)
 - **Target SDK**: Android 15+ (API 36)
 - **Java/Kotlin**: JVM toolchain version 21
 
@@ -115,9 +115,33 @@ Dependencies are managed via `gradle/libs.versions.toml` using Gradle version ca
 - **Unit Tests**: Fast, isolated tests using MockK for mocking
 - **Instrumentation Tests**: Integration tests with Hilt for full dependency injection testing
 
+## Continuous Integration
+
+The project uses GitHub Actions for automated testing on every push and pull request to the main branch.
+
+### CI Pipeline
+
+The CI workflow runs tests on **two Android emulators** using a matrix strategy:
+
+- **API 23** (minSdk) - Validates compatibility with the minimum supported Android version
+- **API 36** (targetSdk) - Tests against the target Android version
+
+Both emulators use:
+- Google APIs system image
+- x86_64 architecture
+- Nexus 6 device profile
+
+### CI Tasks
+
+1. **Dependency Updates Check**: Scans for available dependency updates
+2. **Build & Test**: Runs `./gradlew build connectedCheck` on both API levels
+3. **Android ELF Alignment Check**: Validates APK alignment
+
+**Note**: When updating `minSdk` or `targetSdk` in `app/build.gradle.kts`, the matrix API levels in `.github/workflows/android.yml` must be manually updated to match.
+
 ## Technical Details
 
-- **Current Version**: 1.10.0+40
+- **Current Version**: 2.0.0+41
 - **Compile/Target SDK**: 36 (Android 15+)
 - **Kotlin**: 2.2.21
 - **Compose Compiler**: 1.5.15
