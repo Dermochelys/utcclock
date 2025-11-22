@@ -1,9 +1,11 @@
 package com.dermochelys.utcclock.view.clock
 
+import android.content.res.Configuration
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -16,10 +18,6 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.time.Duration.Companion.minutes
-
-private const val TIME_FORMAT = "HH:mm\nz"
-
-private const val DATE_FORMAT = "EEEE\nMMMM dd\nyyyy"
 
 @RunWith(AndroidJUnit4::class)
 class ClockUiTests {
@@ -35,22 +33,28 @@ class ClockUiTests {
 
     @Test
     fun clockDisplaysInitialTime_andUpdatesWhenTimeChanges() {
+        var isPortrait = true
+
         composeTestRule.setContent {
+            val configuration = LocalConfiguration.current
+            isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+
             Clock(
                 zonedDateTime = zonedDateTime,
-                timeFormat = TIME_FORMAT,
-                dateFormat = DATE_FORMAT,
             )
         }
 
         composeTestRule.waitForIdle()
 
+        val dateFormatString = if (isPortrait) "EEEE\nMMMM dd\nyyyy" else "EEEE\nMMMM dd yyyy"
+        val timeFormatString = if (isPortrait) "HH:mm\nz" else "HH:mm z"
+
         // Format the expected time string
-        val timeFormat = SimpleDateFormat(TIME_FORMAT, Locale.US).also { it.timeZone = utc }
+        val timeFormat = SimpleDateFormat(timeFormatString, Locale.US).also { it.timeZone = utc }
         val expectedTimeText = timeFormat.format(initialDate)
 
         // Format the expected date string
-        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US).also { it.timeZone = utc }
+        val dateFormat = SimpleDateFormat(dateFormatString, Locale.US).also { it.timeZone = utc }
         val expectedDateText = dateFormat.format(initialDate)
 
         // Verify initial time is displayed

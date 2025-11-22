@@ -1,4 +1,4 @@
-package com.dermochelys.utcclock.view
+package com.dermochelys.utcclock.view.clock
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+private const val MIDDLE_SPRING_WEIGHT = 1.0f
+
 @Composable
 @Preview
 fun ButtonRow(
@@ -18,7 +20,6 @@ fun ButtonRow(
     onFontLicenseButtonClicked: () -> Unit = {},
     focusedButtonColor: Color = Color.Blue,
     contentColor: Color = Color.White,
-    middleSprintWeight: Float = 1.0f,
     onDonationButtonClicked: () -> Unit = {},
 ) {
     Row(
@@ -34,7 +35,7 @@ fun ButtonRow(
                 unfocusedColor = contentColor
             )
 
-            Spacer(modifier = Modifier.weight(middleSprintWeight))
+            Spacer(modifier = Modifier.weight(MIDDLE_SPRING_WEIGHT))
 
             DonationButton(
                 onNavigateToDonationDialog = onDonationButtonClicked,
@@ -48,7 +49,7 @@ fun ButtonRow(
                 unfocusedColor = contentColor
             )
 
-            Spacer(modifier = Modifier.weight(middleSprintWeight))
+            Spacer(modifier = Modifier.weight(MIDDLE_SPRING_WEIGHT))
 
             FontLicenseButton(
                 onNavigateToFontLicenseDialog = onFontLicenseButtonClicked,
