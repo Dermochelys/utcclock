@@ -1,4 +1,4 @@
-package com.dermochelys.utcclock.view
+package com.dermochelys.utcclock.view.clock
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
