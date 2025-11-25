@@ -21,8 +21,8 @@ android {
 
         // For this app and its simple needs, no fancier version code scheme is needed.
         // Just monotonically increase and follow SemVer for the versionName.
-        versionCode = 37
-        versionName = "1.9.2+37"
+        versionCode = 40
+        versionName = "1.10.0+40"
 
         // 2025-07-15 Specify NDK version as workaround: https://issuetracker.google.com/issues/237187538
         ndkVersion = "29.0.14206865"

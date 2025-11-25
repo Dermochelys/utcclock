@@ -22,14 +22,14 @@ A simple, offline-only Android application that displays UTC (Coordinated Univer
 
 - **Minimum SDK**: Android 5.0 (API 21)
 - **Target SDK**: Android 15+ (API 36)
-- **Java/Kotlin**: JVM toolchain version 24
+- **Java/Kotlin**: JVM toolchain version 21
 
 ## Building the Project
 
 ### Prerequisites
 
 - Android Studio or IntelliJ IDEA with Android plugin
-- JDK 24
+- JDK 21
 - Android SDK with API level 36
 - NDK 29.0.14206865
 
@@ -117,10 +117,15 @@ Dependencies are managed via `gradle/libs.versions.toml` using Gradle version ca
 
 ## Technical Details
 
+- **Current Version**: 1.10.0+40
 - **Compile/Target SDK**: 36 (Android 15+)
+- **Kotlin**: 2.2.21
 - **Compose Compiler**: 1.5.15
+- **Compose BOM**: 2025.11.01
 - **Hilt Version**: 2.57.2
-- **Kotlin Symbol Processing (KSP)**: 2.2.20-2.0.3
+- **Kotlin Symbol Processing (KSP)**: 2.2.21-2.0.4
+- **Android Gradle Plugin**: 8.13.1
+- **Gradle**: 9.2.1
 - **Build Features**:
   - R8 minification and resource shrinking enabled for release builds
   - Java compiler warnings treated as errors

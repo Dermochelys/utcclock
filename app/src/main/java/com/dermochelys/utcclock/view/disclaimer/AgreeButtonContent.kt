@@ -10,14 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dermochelys.utcclock.R
-import kotlin.math.min
 
 @Composable
 @Preview
@@ -38,10 +36,7 @@ fun AgreeButtonContent() {
         Text(
             text = stringResource(R.string.i_agree),
             color = Color.Black,
-            fontSize = (min(
-                dimensionResource(R.dimen.disclaimer_font_size).value + 2.0f,
-                30.0f
-            )).sp,
+            fontSize = 30.sp,
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp)
                 .align(Alignment.CenterVertically)

@@ -6,13 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,10 +26,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,7 +37,6 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.dermochelys.utcclock.R
-import kotlin.math.min
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -54,22 +55,23 @@ fun TvDisclaimer(
             .background(Color.Black),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_contract),
-            contentDescription = stringResource(R.string.contract_description),
-            tint = colorResource(R.color.blue),
-            modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.Start)
-        )
+        Column(
+            modifier = Modifier.weight(1.0f)
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_contract),
+                contentDescription = stringResource(R.string.contract_description),
+                tint = colorResource(R.color.blue),
+                modifier = Modifier.size(36.dp)
+            )
 
-        Text(
-            text = stringResource(R.string.disclaimer_text),
-            color = Color.White,
-            fontSize = dimensionResource(R.dimen.disclaimer_font_size).value.sp,
-        )
-
-        Spacer(modifier = Modifier.weight(1.0f))
+            BasicText(
+                text = stringResource(R.string.disclaimer_text),
+                autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = 100.sp, stepSize = 1.sp),
+                style = TextStyle(color = Color.White),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         Button(
             onClick = onDisclaimerAgreeClick,
@@ -88,8 +90,7 @@ fun TvDisclaimer(
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .wrapContentHeight()
+                modifier = Modifier.wrapContentHeight()
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_check_mark),
@@ -104,10 +105,7 @@ fun TvDisclaimer(
                 Text(
                     text = stringResource(R.string.i_agree),
                     color = Color.Black,
-                    fontSize = (min(
-                        dimensionResource(R.dimen.disclaimer_font_size).value + 2.0f,
-                        30.0f
-                    )).sp,
+                    fontSize = 30.sp,
                     modifier = Modifier
                         .padding(start = 10.dp, end = 10.dp)
                         .align(Alignment.CenterVertically)
@@ -119,7 +117,5 @@ fun TvDisclaimer(
 
     overlayBitmap?.let { it -> Overlay(it, overlayPositionShift) }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 }
