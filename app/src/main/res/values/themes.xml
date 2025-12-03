@@ -7,5 +7,7 @@
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
     </style>
 
-    <style name="Theme.UTCClock" parent="Base.Theme.UTCClock" />
+    <style name="Theme.UTCClock" parent="Base.Theme.UTCClock">
+        <!-- Edge-to-edge is configured via enableEdgeToEdge() in Activity. -->
+    </style>
 </resources>

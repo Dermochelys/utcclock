@@ -5,6 +5,11 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# WorkManager classes loaded by reflection. R8 strips them because the app
+# never references them directly (they are transitive dependencies via Glance).
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-keep class androidx.work.OverwritingInputMerger { <init>(); }
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

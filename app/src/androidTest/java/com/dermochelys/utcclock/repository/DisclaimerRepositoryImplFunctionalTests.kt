@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.dermochelys.utcclock.repository.internal.DisclaimerRepositoryImpl
+import com.dermochelys.utcclock.widget.DisclaimerStateBroadcaster
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,7 +35,8 @@ class DisclaimerRepositoryImplFunctionalTests {
     fun disclaimerBehavior_shouldOperateCorrectly() = runTest {
         val dispatcher = UnconfinedTestDispatcher()
         val dataStore = DataStoreProvider(targetContext, dispatcher).datastore()
-        val underTest = DisclaimerRepositoryImpl(dataStore, dispatcher)
+        val disclaimerStateBroadcaster = DisclaimerStateBroadcaster(targetContext)
+        val underTest = DisclaimerRepositoryImpl(dataStore, dispatcher, disclaimerStateBroadcaster)
 
         val flow = underTest.shouldShowDisclaimer()
         assertTrue(flow.first())

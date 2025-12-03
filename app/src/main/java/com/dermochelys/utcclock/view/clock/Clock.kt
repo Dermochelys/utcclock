@@ -150,9 +150,7 @@ fun Clock(
             }
         }
 
-        overlayBitmap?.let<android.graphics.Bitmap, kotlin.Unit> { Overlay(it,
-            overlayPositionShift = overlayPositionShift
-        ) }
+        overlayBitmap?.let { Overlay(it, overlayPositionShift) }
     }
 }
 

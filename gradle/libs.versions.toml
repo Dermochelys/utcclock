@@ -1,27 +1,30 @@
 [versions]
-agp = "8.13.1"
+agp = "9.1.0"
 
-kotlin = "2.2.21"
+kotlin = "2.3.20"
 
-core = "1.17.0"
-coreKtx = "1.17.0"
+core = "1.18.0"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+testOrchestrator = "1.6.1"
+uiautomator = "2.3.0"
 appcompat = "1.7.1"
-lifecycle = "2.9.4" # 2.10.0+ require minApi 23+
+lifecycle = "2.10.0"
 material = "1.13.0"
-navigation = "2.9.6"
-datastorePreferences = "1.1.7" # 1.2.0+ require minApi 23+
+navigation = "2.9.7"
+datastorePreferences = "1.2.1"
 tvMaterial = "1.0.1"
-tvFoundation = "1.0.0-alpha12"
-composeBom = "2025.11.01"
-activityCompose = "1.11.0" # 1.12.0+ require minApi 23+
+tvFoundation = "1.0.0-beta01"
+composeBom = "2026.03.01"
+activityCompose = "1.13.0"
+glance = "1.1.1"
 gradleVersionsPlugin = "0.53.0"
-hilt = "2.57.2"
-ksp = "2.2.21-2.0.4"
+hilt = "2.59.2"
+ksp = "2.3.6"
 
-mockk = "1.14.6"
+mockk = "1.14.9"
 kotlinxCoroutinesTest = "1.10.2"
 legacySupportV4 = "1.0.0"
 fragmentKtx = "1.8.9"
@@ -49,10 +52,14 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "tvFoundation" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+androidx-glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-test-orchestrator = { group = "androidx.test", name = "orchestrator", version.ref = "testOrchestrator" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk"}
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }

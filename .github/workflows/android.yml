@@ -29,8 +29,13 @@ jobs:
         run: |
           ./gradlew dependencyUpdates --refresh-dependencies --no-parallel
 
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Test on both min SDK (23) and target SDK (36) as well as an intermediate version (30)
+        # These must be kept in sync with minSdk and targetSdk in app/build.gradle.kts
+        api-level: [23, 30, 36]
 
     steps:
       - name: checkout
@@ -60,13 +65,13 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-36
+          key: avd-${{ matrix.api-level }}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
           profile: Nexus 6
@@ -78,7 +83,7 @@ jobs:
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 36
+          api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
           profile: Nexus 6

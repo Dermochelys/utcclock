@@ -2,7 +2,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.gradle.versions.plugin)
     alias(libs.plugins.hilt.android)
@@ -12,17 +11,17 @@ plugins {
 android {
     namespace = "com.dermochelys.utcclock"
     compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    buildToolsVersion = "36.1.0"
 
     defaultConfig {
         applicationId = "com.dermochelys.utcclock"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
 
         // For this app and its simple needs, no fancier version code scheme is needed.
         // Just monotonically increase and follow SemVer for the versionName.
-        versionCode = 40
-        versionName = "1.10.0+40"
+        versionCode = 44
+        versionName = "2.0.0+44"
 
         // 2025-07-15 Specify NDK version as workaround: https://issuetracker.google.com/issues/237187538
         ndkVersion = "29.0.14206865"
@@ -53,11 +52,17 @@ android {
 
     tasks.withType<JavaCompile> {
         options.compilerArgs.add("-Werror")
+        options.compilerArgs.add("-Xlint:all,-processing")
     }
 
     kotlin {
         jvmToolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
+        }
+
+        compilerOptions {
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
+            allWarningsAsErrors = true
         }
     }
 
@@ -73,6 +78,7 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     packaging {
@@ -94,6 +100,8 @@ android {
         // This is needed when a new Kotlin version is out but the corresponding KSP version is not
         disable += "NewerVersionAvailable"
         disable += "GradleDependency"
+        disable += "AndroidGradlePluginVersion"
+        disable += "OldTargetApi"
     }
 }
 
@@ -121,6 +129,8 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
@@ -134,7 +144,9 @@ dependencies {
 
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.junit)
+    androidTestUtil(libs.androidx.test.orchestrator)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.uiautomator)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

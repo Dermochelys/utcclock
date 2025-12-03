@@ -7,7 +7,6 @@ import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_B
 
 fun Window.hideSystemUi() {
     val windowInsetsController = WindowCompat.getInsetsController(this, decorView)
-    WindowCompat.setDecorFitsSystemWindows(this, false)
 
     windowInsetsController.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
