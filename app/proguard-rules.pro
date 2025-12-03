@@ -5,6 +5,11 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# WorkManager's Room-generated database implementation is loaded by reflection.
+# R8 strips it because the app never references it directly (it's a transitive
+# dependency via Glance).
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

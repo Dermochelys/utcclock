@@ -3,6 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Exact alarm permission for precise clock widget updates (API 31+) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <!-- Custom permission to restrict internal broadcasts to this app only -->
+    <permission
+        android:name="com.dermochelys.utcclock.permission.INTERNAL_BROADCAST"
+        android:protectionLevel="signature" />
+
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
@@ -39,6 +47,45 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
-    </application>
 
+        <receiver
+            android:name=".widget.WidgetBroadcastReceiver"
+            android:enabled="false"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.dermochelys.utcclock.ACTION_APP_STARTED" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.dermochelys.utcclock.ACTION_DISCLAIMER_STATE_CHANGED" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.dermochelys.utcclock.ACTION_UPDATE_WIDGET" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".widget.GlanceAppWidgetReceiver"
+            android:exported="true"
+            android:permission="com.dermochelys.utcclock.permission.INTERNAL_BROADCAST">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/utc_clock_widget_info" />
+        </receiver>
+    </application>
 </manifest>

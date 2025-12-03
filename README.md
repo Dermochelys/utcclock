@@ -6,11 +6,13 @@ A simple, offline-only Android application that displays UTC (Coordinated Univer
 
 - This is a single-module Android application built with Kotlin that provides an immersive fullscreen UTC time display.
 - It features a hybrid UI approach combining traditional Android Views with Jetpack Compose components.
-  - In the future, when [Jetpack Navigation 3](https://developer.android.com/guide/navigation/navigation-3) is out of alpha it will allow removal of Fragment use and a pure Compose architecture.  
+  - [Jetpack Navigation 3](https://developer.android.com/guide/navigation/navigation-3) is now stable and planned for integration, which will enable removal of Fragment use and transition to a pure Compose architecture.  
 
 ## Features
 
 - **Universal Time Display**: Clean, easy-to-read UTC clock
+- **Home Screen Widget**: Resizable widget for quick UTC time access
+  - Note: Does not include anti-burn-in (image retention) prevention, as home screen display already exposes other static elements (icons, labels, etc.) to potential burn-in
 - **Multi-Platform Support**:
   - Android TV (leanback) optimized interface
   - Mobile devices with touchscreen support
@@ -20,8 +22,8 @@ A simple, offline-only Android application that displays UTC (Coordinated Univer
 
 ## Requirements
 
-- **Minimum SDK**: Android 5.0 (API 21)
-- **Target SDK**: Android 15+ (API 36)
+- **Minimum SDK**: Android 6.0 (API 23)
+- **Target SDK**: Android 16 / Baklava (API 36)
 - **Java/Kotlin**: JVM toolchain version 21
 
 ## Building the Project
@@ -66,14 +68,37 @@ The app uses modern Android architecture components:
 ```
 app/src/main/java/com/dermochelys/utcclock/
 ├── Activity.kt                    # Main activity
-├── landing/                       # Entry point fragment
+├── Application.kt                 # Application class with Hilt setup
+├── di/                            # Dependency injection modules
+│   ├── WidgetEntryPoint.kt        # Hilt entry point for widget
+│   ├── CoroutineModule.kt         # Coroutine scope providers
+│   ├── DataStoreModule.kt         # DataStore providers
+│   ├── DispatcherModule.kt        # Coroutine dispatcher providers
+│   └── RepositoryModule.kt        # Repository providers
+├── repository/                    # Data layer (Repository pattern)
+│   ├── DisclaimerRepository.kt    # Disclaimer acceptance interface
+│   ├── ZonedDateRepository.kt     # UTC time data interface
+│   └── internal/                  # Repository implementations
+│       ├── DisclaimerRepositoryImpl.kt
+│       └── ZonedDateRepositoryImpl.kt
 ├── view/
+│   ├── OverlayConst.kt            # Shared overlay constants
+│   ├── landing/                   # Entry point fragment
 │   ├── clock/                     # Main UTC clock display
 │   ├── disclaimer/                # Legal disclaimer view
+│   ├── donation/                  # Donation information dialog
 │   ├── fontlicense/               # Font licensing dialog
 │   └── common/                    # Shared UI utilities
-├── repository/                    # Data layer
-└── di/                           # Dependency injection modules
+└── widget/                        # Home screen widget (Glance-based)
+    ├── UtcClockGlanceAppWidget.kt # Widget implementation
+    ├── GlanceAppWidgetReceiver.kt # Widget receiver
+    ├── BroadcastReceiver.kt       # Package replaced receiver
+    ├── DisclaimerStateBroadcaster.kt # Disclaimer state sync
+    ├── UpdateScheduler.kt         # Alarm scheduling utilities
+    └── internal/                  # Widget internal implementations
+        ├── AutoFontSize.kt        # Dynamic font sizing
+        ├── BroadcastReceiverExt.kt # Receiver extensions
+        └── TextToBitmapRenderer.kt # Text rendering utilities
 ```
 
 ### Code Quality
@@ -100,11 +125,8 @@ Dependencies are managed via `gradle/libs.versions.toml` using Gradle version ca
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all unit tests (no emulator/device required)
 ./gradlew test
-
-# Run unit tests only
-./gradlew testDebugUnitTest
 
 # Run instrumented tests (requires emulator/device)
 ./gradlew connectedAndroidTest
@@ -115,21 +137,93 @@ Dependencies are managed via `gradle/libs.versions.toml` using Gradle version ca
 - **Unit Tests**: Fast, isolated tests using MockK for mocking
 - **Instrumentation Tests**: Integration tests with Hilt for full dependency injection testing
 
+### Future: Maestro Tests
+
+Some user flows can't be covered by Android instrumentation tests because they require an **out-of-process test driver**. Instrumentation runs inside the target app's process, so when the OS kills the app, the test dies with it. [Maestro](https://maestro.mobile.dev/) drives the device via ADB from outside the app process and survives these kills.
+
+Flows that would benefit from Maestro coverage:
+
+- **Revoke `SCHEDULE_EXACT_ALARM` via OS settings toggle** — Android kills the app process on revoke. The production path is correct (the OS restarts the app via the manifest-registered receiver to deliver `ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED`), but there's no way to observe the widget transition from within instrumentation.
+- **Force-stop recovery** — Tapping the widget after force-stop launches the activity but alarms remain cancelled. A Maestro test could force-stop the app, tap the widget, and verify recovery.
+- **Device reboot recovery** — Alarms are not persisted across reboots, so widgets go stale until something re-schedules. Testing reboot → widget updates requires driving the device through the reboot itself.
+- **Real OS settings toggle for grant** — Today the grant helper opens the settings screen but flips the permission via `appops` shell rather than tapping the actual toggle. A Maestro flow could tap the real toggle, validating that the settings-screen integration still works across Android versions.
+
+## Continuous Integration
+
+The project uses GitHub Actions for automated testing on every push and pull request to the main branch.
+
+### CI Pipeline
+
+The CI workflow runs tests on **two Android emulators** using a matrix strategy:
+
+- **API 23** (minSdk) - Validates compatibility with the minimum supported Android version
+- **API 30** - Validates compatibility with an intermediate Android version
+- **API 36** (targetSdk) - Tests against the target Android version
+
+CI emulators use:
+- Google APIs system image
+- x86_64 architecture
+- Nexus 6 device profile
+
+### CI Tasks
+
+1. **Dependency Updates Check**: Scans for available dependency updates
+2. **Build & Test**: Runs `./gradlew build connectedCheck` on both API levels
+3. **Android ELF Alignment Check**: Validates APK alignment
+
+**Note**: When updating `minSdk` or `targetSdk` in `app/build.gradle.kts`, the matrix API levels in `.github/workflows/android.yml` must be manually updated to match.
+
 ## Technical Details
 
-- **Current Version**: 1.10.0+40
-- **Compile/Target SDK**: 36 (Android 15+)
-- **Kotlin**: 2.2.21
-- **Compose Compiler**: 1.5.15
-- **Compose BOM**: 2025.11.01
-- **Hilt Version**: 2.57.2
-- **Kotlin Symbol Processing (KSP)**: 2.2.21-2.0.4
-- **Android Gradle Plugin**: 8.13.1
-- **Gradle**: 9.2.1
-- **Build Features**:
-  - R8 minification and resource shrinking enabled for release builds
-  - Java compiler warnings treated as errors
-  - Lint warnings treated as errors (with specific exceptions)
+- **Current Version**: 2.0.0+41
+- **Compile/Target SDK**: 36 (Android 16 / Baklava)
+
+### Key Dependencies
+
+For specific version numbers, see [`gradle/libs.versions.toml`](gradle/libs.versions.toml)
+
+**Build Tools:**
+- Android Gradle Plugin
+- Kotlin
+- Kotlin Compose Compiler Plugin
+- Kotlin Symbol Processing (KSP)
+- Gradle
+
+**Core Libraries:**
+- AndroidX Core KTX
+- AndroidX AppCompat
+- Material Design
+
+**UI:**
+- Jetpack Compose (BOM)
+- Compose Material3
+- Activity Compose
+- AndroidX TV Material
+- AndroidX TV Foundation
+
+**Architecture:**
+- Hilt (Dependency Injection)
+- AndroidX Navigation
+- AndroidX Lifecycle (ViewModel, LiveData, Runtime)
+- AndroidX DataStore Preferences
+- AndroidX Fragment KTX
+
+**Widget:**
+- AndroidX Glance (App Widget & Material3)
+
+**Testing:**
+- JUnit 4
+- MockK
+- Kotlinx Coroutines Test
+- AndroidX JUnit
+- Espresso Core
+- UI Automator
+
+### Build Features
+
+- R8 minification and resource shrinking enabled for release builds
+- Java compiler warnings treated as errors
+- Lint warnings treated as errors (with specific exceptions)
 
 ## License
 

@@ -10,8 +10,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -19,9 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
-
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class ZonedDateRepositoryImplFunctionalTests {
@@ -50,13 +45,15 @@ class ZonedDateRepositoryImplFunctionalTests {
         val firstTime = underTest.zonedDateFlow().first().first.time
         assertTrue("invalid first time", firstTime != 0L)
 
-        delay(100.milliseconds)
-
+        // Verify time doesn't change on its own without onTimeUpdated()
+        Thread.sleep(100)
         val secondTime = underTest.zonedDateFlow().first().first.time
         assertEquals("times were not equal", firstTime, secondTime)
 
+        // Thread.sleep for real wall-clock delay — delay() inside runTest
+        // uses virtual time, so Date().time wouldn't actually advance.
+        Thread.sleep(100)
         underTest.onTimeUpdated()
-        delay(100.milliseconds)
 
         val thirdTime = underTest.zonedDateFlow().first().first.time
         assertTrue("times were equal",thirdTime != firstTime)

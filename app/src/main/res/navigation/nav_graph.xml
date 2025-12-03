@@ -20,6 +20,11 @@
         android:name="com.dermochelys.utcclock.view.clock.ClockFragment"
         android:label="@string/clock" />
 
+    <fragment
+        android:id="@+id/exact_alarm_permission_fragment"
+        android:name="com.dermochelys.utcclock.view.exactalarmpermission.ExactAlarmPermissionFragment"
+        android:label="@string/exact_alarm_permission" />
+
     <dialog
         android:id="@+id/font_license_dialog"
         android:name="com.dermochelys.utcclock.view.fontlicense.FontLicenseDialogFragment"
