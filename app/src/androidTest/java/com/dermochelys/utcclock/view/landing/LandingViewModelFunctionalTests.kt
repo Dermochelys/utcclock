@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import com.dermochelys.utcclock.repository.internal.disclaimerAgreedKey
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -73,18 +73,18 @@ class LandingViewModelFunctionalTests {
 
     @Test
     fun disclaimerNotAcceptedYetShowsDisclaimer() = runTest {
-        var navigationResult = -1
+        var navigationResult = NavigationAction.NONE
 
         backgroundScope.launch(coroutineDispatcher) {
             underTest.getNavigationActions().collect { navigationResult = it }
         }
 
-        TestCase.assertEquals(R.id.disclaimer_fragment, navigationResult)
+        TestCase.assertEquals(NavigationAction.SHOW_DISCLAIMER, navigationResult)
     }
 
     @Test
     fun disclaimerAlreadyAcceptedShowsClock() = runTest {
-        var navigationResult = -1
+        var navigationResult = NavigationAction.NONE
 
         withContext(coroutineDispatcher) { dataStore.edit { it[disclaimerAgreedKey()] = true } }
 
@@ -92,7 +92,7 @@ class LandingViewModelFunctionalTests {
             underTest.getNavigationActions().collect { navigationResult = it }
         }
 
-        TestCase.assertEquals(R.id.clock_fragment, navigationResult)
+        TestCase.assertEquals(NavigationAction.SHOW_CLOCK, navigationResult)
     }
 
     // Helpers

@@ -2,8 +2,8 @@ package com.dermochelys.utcclock.view.landing
 
 import androidx.annotation.OpenForTesting
 import androidx.lifecycle.ViewModel
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -18,7 +18,7 @@ class LandingViewModel @Inject constructor(
     private val coroutineScope: CoroutineScope,
 ) : ViewModel() {
 
-    private val navigationActions = MutableStateFlow(-1)
+    private val navigationActions = MutableStateFlow(NavigationAction.NONE)
 
     private val disclaimerJob = coroutineScope.launch { checkDisclaimerAcceptance() }
 
@@ -29,16 +29,16 @@ class LandingViewModel @Inject constructor(
         coroutineScope.cancel()
     }
 
-    fun getNavigationActions() = navigationActions as Flow<Int>
+    fun getNavigationActions() = navigationActions as Flow<NavigationAction>
 
     // Helpers
 
     private suspend fun checkDisclaimerAcceptance() {
         disclaimerRepository.shouldShowDisclaimer().collect { shouldShowDisclaimer ->
             if (shouldShowDisclaimer) {
-                navigationActions.emit(R.id.disclaimer_fragment)
+                navigationActions.emit(NavigationAction.SHOW_DISCLAIMER)
             } else {
-                navigationActions.emit(R.id.clock_fragment)
+                navigationActions.emit(NavigationAction.SHOW_CLOCK)
             }
         }
     }

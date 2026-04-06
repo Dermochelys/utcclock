@@ -1,17 +1,15 @@
 package com.dermochelys.utcclock.view.clock
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.annotation.OpenForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import com.dermochelys.utcclock.repository.ZonedDateRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import com.dermochelys.utcclock.view.OVERLAY_ROTATION_PERIOD_S
 import com.dermochelys.utcclock.view.common.getRandomContentColor
-import com.dermochelys.utcclock.view.common.toColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -28,12 +26,6 @@ import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
-private const val SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT = "fontLicenseButtonAlignment"
-private const val SAVED_INSTANCE_STATE_BUTTON_ROW_ALIGNMENT = "buttonRowAlignment"
-private const val SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT = "dateTextAlignment"
-private const val SAVED_INSTANCE_STATE_CONTENT_COLOR = "contentColor"
-private const val SAVED_INSTANCE_STATE_TEXT_ORDER = "textOrder"
-
 /**
  * NOTE: Only supports US locale
  *
@@ -47,7 +39,7 @@ class ClockViewModel @Inject constructor(
     private val zonedDateRepository: ZonedDateRepository,
     private val coroutineScope: CoroutineScope
 ) : ViewModel() {
-    private val navigationActions = MutableSharedFlow<Int>(
+    private val navigationActions = MutableSharedFlow<NavigationAction>(
         // Warning: enabling replay will cause issues with rotation
         extraBufferCapacity = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
@@ -113,32 +105,16 @@ class ClockViewModel @Inject constructor(
     }
 
     fun onFontLicenseButtonClicked() {
-        navigateTo(com.dermochelys.utcclock.R.id.font_license_dialog)
+        navigateTo(NavigationAction.SHOW_FONT_LICENSE)
     }
 
     fun onDonationButtonClicked() {
-        navigateTo(com.dermochelys.utcclock.R.id.donation_dialog)
-    }
-
-    fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(SAVED_INSTANCE_STATE_CONTENT_COLOR, contentColor.toArgb())
-        outState.putBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER, textOrderDateFirst)
-        outState.putBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT, fontLicenseButtonAlignToStart)
-        outState.putBoolean(SAVED_INSTANCE_STATE_BUTTON_ROW_ALIGNMENT, buttonRowTop)
-        outState.putBoolean(SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT, dateTextAlignToStart)
-    }
-
-    fun onLoadInstanceState(inState: Bundle) {
-        contentColor = inState.getInt(SAVED_INSTANCE_STATE_CONTENT_COLOR).toColor()
-        textOrderDateFirst = inState.getBoolean(SAVED_INSTANCE_STATE_TEXT_ORDER)
-        fontLicenseButtonAlignToStart = inState.getBoolean(SAVED_INSTANCE_STATE_FONT_LICENSE_BUTTON_ALIGNMENT)
-        buttonRowTop = inState.getBoolean(SAVED_INSTANCE_STATE_BUTTON_ROW_ALIGNMENT)
-        dateTextAlignToStart = inState.getBoolean(SAVED_INSTANCE_STATE_DATE_TEXT_ALIGNMENT)
+        navigateTo(NavigationAction.SHOW_DONATION)
     }
 
     fun onTimeUpdated() { coroutineScope.launch { zonedDateRepository.onTimeUpdated() } }
 
-    fun getNavigationActions() = navigationActions as Flow<Int>
+    fun getNavigationActions() = navigationActions as Flow<NavigationAction>
 
     // Helpers
 
@@ -191,7 +167,7 @@ class ClockViewModel @Inject constructor(
         }
     }
 
-    private fun navigateTo(navigationDestination: Int) {
+    private fun navigateTo(navigationDestination: NavigationAction) {
         coroutineScope.launch {
             navigationActions.emit(navigationDestination)
         }

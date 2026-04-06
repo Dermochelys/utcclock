@@ -5,8 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import com.dermochelys.utcclock.view.OVERLAY_ROTATION_PERIOD_S
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -25,17 +25,12 @@ class DisclaimerViewModel @Inject constructor(
     private val coroutineScope: CoroutineScope,
 ) : ViewModel() {
 
-    private val navigationActions = MutableStateFlow(-1)
-//    <Int>(
-//        // Warning: enabling replay will cause issues with rotation
-//        extraBufferCapacity = 1,
-//        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-//    )
+    private val navigationActions = MutableStateFlow(NavigationAction.NONE)
 
     private val shouldShowJob: Job = coroutineScope.launch {
         disclaimerRepository.shouldShowDisclaimer().collect { shouldShowDisclaimer ->
             if (!shouldShowDisclaimer) {
-                navigationActions.emit(R.id.clock_fragment)
+                navigationActions.emit(NavigationAction.SHOW_CLOCK)
             }
         }
     }
@@ -47,7 +42,7 @@ class DisclaimerViewModel @Inject constructor(
     var overlayPositionShift by mutableStateOf(false)
         private set
 
-    fun getNavigationActions() = navigationActions as Flow<Int>
+    fun getNavigationActions() = navigationActions as Flow<NavigationAction>
 
     fun onDisclaimerAgreeClicked() {
         // Prevent theoretically possible re-click while background task is processing

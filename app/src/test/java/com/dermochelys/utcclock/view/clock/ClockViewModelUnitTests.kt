@@ -1,7 +1,7 @@
 package com.dermochelys.utcclock.view.clock
 
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.internal.ZonedDateRepositoryImpl
+import com.dermochelys.utcclock.view.NavigationAction
 import io.mockk.MockKAnnotations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,14 +33,14 @@ class ClockViewModelUnitTests {
     @Test
     fun fontLicenseOverlay_and_fontLicenseButton_workCorrectly() = runTest {
         val dispatcher = setupUnderTest()
-        var navigationResult = -1
+        var navigationResult = NavigationAction.NONE
 
         backgroundScope.launch(dispatcher) {
             underTest.getNavigationActions().collect { navigationResult = it }
         }
 
         underTest.onFontLicenseButtonClicked()
-        assertEquals(R.id.font_license_dialog, navigationResult)
+        assertEquals(NavigationAction.SHOW_FONT_LICENSE, navigationResult)
     }
 
     @Test
