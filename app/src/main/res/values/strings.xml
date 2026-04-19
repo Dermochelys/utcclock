@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">UTC Clock</string>
 
-    <string name="landing">Landing</string>
-    <string name="clock">Clock</string>
-    <string name="font_license">Font License</string>
-    <string name="donation">Donation</string>
     <string name="widget_description">Displays current UTC time</string>
     <string name="widget_tap_to_begin">Tap to begin</string>
     <string name="widget_alarm_permission_required">Tap for alarm permissions\nfor accurate clock updates</string>
-    <string name="exact_alarm_permission">Exact Alarm Permission</string>
     <string name="exact_alarm_permission_explanation">To keep the widget updated precisely every minute, UTC Clock needs the \"Alarms &amp; reminders\" permission.</string>
     <string name="open_settings">Open Settings</string>
     <string name="not_now">Not now</string>

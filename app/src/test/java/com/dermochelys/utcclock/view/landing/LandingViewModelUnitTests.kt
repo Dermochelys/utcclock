@@ -1,7 +1,7 @@
 package com.dermochelys.utcclock.view.landing
 
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -36,19 +36,19 @@ class LandingViewModelUnitTests {
 
     @Test
     fun when_disclaimerNotAgreed_showsDisclaimer() = runTest {
-        runTest(true, R.id.disclaimer_fragment)
+        runTest(true, NavigationAction.SHOW_DISCLAIMER)
     }
 
     @Test
     fun when_disclaimerAgreed_showsClock() = runTest {
-        runTest(false, R.id.clock_fragment)
+        runTest(false, NavigationAction.SHOW_CLOCK)
     }
 
     // Helpers
 
     private suspend fun TestScope.runTest(
         initialValue: Boolean,
-        expectedDestination: Int
+        expectedDestination: NavigationAction
     ) {
         val dispatcher = UnconfinedTestDispatcher()
         val coroutineScope = CoroutineScope(dispatcher)
@@ -58,7 +58,7 @@ class LandingViewModelUnitTests {
 
         underTest = LandingViewModel(disclaimerRepository, coroutineScope)
 
-        var navigation = -1
+        var navigation = NavigationAction.NONE
 
         backgroundScope.launch(dispatcher) {
             underTest.getNavigationActions().collect { navigation = it }

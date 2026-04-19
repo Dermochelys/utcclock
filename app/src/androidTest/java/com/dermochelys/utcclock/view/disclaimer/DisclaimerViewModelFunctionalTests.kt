@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import com.dermochelys.utcclock.repository.internal.disclaimerAgreedKey
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -72,7 +72,7 @@ class DisclaimerViewModelFunctionalTests {
 
     @Test
     fun when_disclaimerAccepted_persistsStateAndShowsClock() = runTest {
-        var navigationResult = -1
+        var navigationResult = NavigationAction.NONE
 
         backgroundScope.launch(coroutineDispatcher) {
             underTest.getNavigationActions().collect { navigationResult = it }
@@ -88,10 +88,10 @@ class DisclaimerViewModelFunctionalTests {
             }
         }
 
-        TestCase.assertEquals(-1, navigationResult)
+        TestCase.assertEquals(NavigationAction.NONE, navigationResult)
 
         underTest.onDisclaimerAgreeClicked()
-        TestCase.assertEquals(R.id.clock_fragment, navigationResult)
+        TestCase.assertEquals(NavigationAction.SHOW_CLOCK, navigationResult)
         TestCase.assertTrue(acceptedDisclaimer)
     }
 

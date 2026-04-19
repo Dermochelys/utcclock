@@ -1,7 +1,7 @@
 package com.dermochelys.utcclock.view.disclaimer
 
-import com.dermochelys.utcclock.R
 import com.dermochelys.utcclock.repository.DisclaimerRepository
+import com.dermochelys.utcclock.view.NavigationAction
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -38,7 +38,7 @@ class DisclaimerViewModelUnitTests {
     @Test
     fun when_disclaimerAgreed_hidesDisclaimer() = runTest {
         val dispatcher = UnconfinedTestDispatcher()
-        var navigationResult = -1
+        var navigationResult = NavigationAction.NONE
 
         val shouldShowDisclaimerFlow = MutableStateFlow(true)
         every { disclaimerRepo.shouldShowDisclaimer() }.returns(shouldShowDisclaimerFlow)
@@ -53,10 +53,10 @@ class DisclaimerViewModelUnitTests {
             shouldShowDisclaimerFlow.emit(false)
         }
 
-        assertEquals(-1, navigationResult)
+        assertEquals(NavigationAction.NONE, navigationResult)
 
         underTest.onDisclaimerAgreeClicked()
         coVerify { disclaimerRepo.onDisclaimerAgreeClicked() }
-        assertEquals(R.id.clock_fragment, navigationResult)
+        assertEquals(NavigationAction.SHOW_CLOCK, navigationResult)
     }
 }
