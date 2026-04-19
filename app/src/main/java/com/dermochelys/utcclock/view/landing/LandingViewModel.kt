@@ -24,7 +24,6 @@ class LandingViewModel @Inject constructor(
 
     @OpenForTesting
     public override fun onCleared() {
-        super.onCleared()
         clearDisclaimerJob()
         coroutineScope.cancel()
     }

@@ -53,7 +53,6 @@ class DisclaimerViewModel @Inject constructor(
 
     @OpenForTesting
     public override fun onCleared() {
-        super.onCleared()
         clearJobs()
         coroutineScope.cancel()
     }

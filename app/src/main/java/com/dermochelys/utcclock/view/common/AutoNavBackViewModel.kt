@@ -36,7 +36,6 @@ class AutoNavBackViewModel @Inject constructor(
     // Helpers
 
     override fun onCleared() {
-        super.onCleared()
         clearNavBackJob()
         coroutineScope.cancel()
     }

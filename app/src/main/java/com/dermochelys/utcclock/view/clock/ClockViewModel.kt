@@ -98,7 +98,6 @@ class ClockViewModel @Inject constructor(
 
     @OpenForTesting
     public override fun onCleared() {
-        super.onCleared()
         clearOverlayTweakJob()
         clearTimeJob()
         coroutineScope.cancel()
